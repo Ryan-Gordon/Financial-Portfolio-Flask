@@ -52,6 +52,53 @@ def BTC_SDC():
 
     # data['BTC_SDC']
     return json.dumps(providedJson)
+    # end function
+
+@app.route('/eth')
+def BTC_ETH():
+    # Pull JSON market data from Poloniex
+    r = requests.get('https://poloniex.com/public?command=returnTicker')
+    # Pull JSON market data from Bittrex
+    b = requests.get('https://bittrex.com/api/v1.1/public/getmarketsummaries')
+    
+    #Print value to user and assign to variable
+    print(r)
+    data = r.json()
+    #Print value to user and assign to variable
+    print(b)
+    bittrex = b.json()
+    print(bittrex)
+    for key in data.keys():
+        print(key)
+    
+    print(data['BTC_ETH']['highestBid'])
+
+    #Prints the bittrex api data for coin 61 aka ETH
+    print(bittrex['result'][61])
+    
+    
+    # In this section highBid and lowAsk are unicode
+    poloHighBid  =  data['BTC_ETH']['highestBid']
+    poloLowAsk = data['BTC_ETH']['lowestAsk']
+    
+    # In order to sum the values and not all the values for the list we need to convert the vars to floats
+    # Float allows us to add the decimal numbers together with precision
+    poloLast = float(data['BTC_ETH']['last'])
+    
+    # Get bittrex data for current market
+    bittrexLast = float(bittrex['result'][61]['Last'])
 
 
-app.run(debug=False)
+    pricesList = [poloLast, bittrexLast]
+    # Calc avg between 3 markets
+    avgPrice = sum(pricesList) / float(len(pricesList))
+
+    marketName = bittrex['result'][61]['MarketName']
+    # Fill JSON with lowAsk highBid price avgBid 
+    providedJson = {"Market Name": marketName, "poloLast": poloLast, "bittrexLast": bittrexLast, "priceObject": pricesList, "poloLow": poloLowAsk,"poloHighBid": poloHighBid}
+
+    # data['BTC_SDC']
+    return json.dumps(providedJson)
+    # end function
+
+app.run()
