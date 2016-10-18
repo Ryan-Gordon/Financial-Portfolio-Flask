@@ -9,7 +9,7 @@ def hello_world():
     
     return "Hello World"
 
-@app.route('/sdc')
+@app.route('api/sdc')
 def BTC_SDC():
     # Pull JSON market data from Poloniex
     r = requests.get('https://poloniex.com/public?command=returnTicker')
@@ -54,7 +54,7 @@ def BTC_SDC():
     return json.dumps(providedJson)
     # end function
 
-@app.route('/eth')
+@app.route('api/eth')
 def BTC_ETH():
     # Pull JSON market data from Poloniex
     r = requests.get('https://poloniex.com/public?command=returnTicker')
@@ -101,7 +101,7 @@ def BTC_ETH():
     return json.dumps(providedJson)
     # end function
 
-@app.route('/xmr')
+@app.route('api/xmr')
 def BTC_XMR():
     # Pull JSON market data from Poloniex
     r = requests.get('https://poloniex.com/public?command=returnTicker')
