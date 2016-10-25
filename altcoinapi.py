@@ -1,15 +1,35 @@
 from flask import Flask
-from flask import json
+from flask import render_template, json
+from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, login_required
 import requests
 
-app = Flask(__name__)
+
+
+
 
 @app.route('/')
 def hello_world():
-    
-    return "Hello World"
+    return render_template("index.html")
 
-@app.route('api/sdc')
+@app.route('/logout')
+def logout():
+    logout_user(self)
+
+@app.route('/topVolume')
+@login_required
+def top_volume():
+    return "Top volume"
+
+# To DO:
+# Add list of most used routes
+# Add page that can add coins
+
+
+### This starts the API section
+
+@app.route('/api/sdc')
+@login_required
 def BTC_SDC():
     # Pull JSON market data from Poloniex
     r = requests.get('https://poloniex.com/public?command=returnTicker')
@@ -54,7 +74,7 @@ def BTC_SDC():
     return json.dumps(providedJson)
     # end function
 
-@app.route('api/eth')
+@app.route('/api/eth')
 def BTC_ETH():
     # Pull JSON market data from Poloniex
     r = requests.get('https://poloniex.com/public?command=returnTicker')
@@ -101,7 +121,7 @@ def BTC_ETH():
     return json.dumps(providedJson)
     # end function
 
-@app.route('api/xmr')
+@app.route('/api/xmr')
 def BTC_XMR():
     # Pull JSON market data from Poloniex
     r = requests.get('https://poloniex.com/public?command=returnTicker')
