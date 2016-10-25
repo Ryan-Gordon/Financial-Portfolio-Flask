@@ -7,11 +7,15 @@ The pricing data for a number of currencies is pulled down, aggregated and then 
 
 ### Roadmap
 
-+ Consume poloniex API and display
-+ Decide on alternate markets to aggregate
-+ Pull market data from chosen markets with requests module
++ <del> Consume poloniex API and display </del>
++ <del>Decide on alternate markets to aggregate </del>
++ <del> Pull market data from chosen markets with requests module </del>
++ Add User authentication for web app allowing users to be store session data
++ Design layout of main pages
++ 
 + Aggregate data initially for a number of higher volume coins to test run time and complexity
 + Create model for the aggregate data and perhaps including single market data in the model
++ Create an API using the webapp's logic so other devs can use it
 + Host api on a hosting provider
 
 Further plans are to consume this api itself to create a web app and perhaps a mobile app 
