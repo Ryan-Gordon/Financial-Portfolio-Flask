@@ -4,7 +4,8 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask_mail import Mail
 from flask.ext.security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, login_required
 import requests
-
+import datetime
+from decimal import *
 # Create app
 mail = Mail()
 MAIL_SERVER='smtp.gmail.com'
@@ -18,7 +19,7 @@ app.config.from_object(__name__)
 mail.init_app(app)
 app.config['DEBUG'] = True
 app.config['SECRET_KEY'] = 'super-secret'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data/data.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data/database.db'
 app.config['SECURITY_REGISTERABLE'] = True
 
 # Create database connection object
@@ -28,6 +29,16 @@ db = SQLAlchemy(app)
 roles_users = db.Table('roles_users',
         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
         db.Column('role_id', db.Integer(), db.ForeignKey('role.id')))
+
+users_currencies = db.Table('users_currencies',
+        db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
+        db.Column('amount', db.Integer()),
+        db.Column('ticker', db.String(255)),
+        db.Column('last', db.Float()),
+        db.Column('bid', db.Float()),
+        db.Column('ask', db.Float())
+        
+        )
 
 class Role(db.Model, RoleMixin):
     id = db.Column(db.Integer(), primary_key=True)
@@ -43,8 +54,16 @@ class User(db.Model, UserMixin):
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
 
+class Currency(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    ticker = db.Column(db.String(255), unique=True)
+    last = db.Column(db.String(255))
+    ask = db.Column(db.String(255))
+    bid = db.Column(db.String(255))
+    timestamp = db.Column(db.DateTime())
+
 # Setup Flask-Security
-user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+user_datastore = SQLAlchemyUserDatastore(db, User, Currency)
 security = Security(app, user_datastore)
 
 # Create a user to test with
@@ -52,11 +71,38 @@ security = Security(app, user_datastore)
 def create_user():
     if db is None:
         db.create_all()
-        user_datastore.create_user(email='ryan@gordon.com', password='password')
+        user_datastore.create_user(email='ryan@gordon.com', password='password',confirmed_at=datetime.datetime.now())
+        user_datastore.create_currency(ticker='btc', last='100.00')
         db.session.commit()
 
 @app.route('/')
 def landing_page():
+    db.create_all()
+    
+    r = requests.get('https://poloniex.com/public?command=returnTicker')
+    # Pull JSON market data from Bittrex
+    b = requests.get('https://bittrex.com/api/v1.1/public/getmarketsummaries')
+    
+    #Print value to user and assign to variable
+    print(r)
+    data = r.json()
+    #Print value to user and assign to variable
+    print(b)
+    bittrex = b.json()
+   
+    for key in data.keys():
+        print(key)
+        print(data[key]['last'])
+        
+        print(float(data[key]['lowestAsk']))
+        print(Decimal(data[key]['lowestAsk']))
+       
+        print(type(data[key]['lowestAsk']))
+       
+        u = Currency(ticker=key,last=data[key]['last'], ask=data[key]['lowestAsk'],bid=data[key]['highestBid'], timestamp=datetime.datetime.now())
+        db.session.add(u)
+
+    db.session.commit()
     return render_template("homepage.html")
 
 @app.route('/index')
@@ -68,9 +114,13 @@ def index():
 def logout():
     logout_user(self)
 
-@app.route('/topVolume')
-def top_volume():
-    return 'Hello'
+@app.route('/addCurrency')
+def addCurrency():
+    peter = Currency.query.filter_by(ticker='BTC_ETH').first()
+    me = users_currencies(amount='100', ticker='BTC_ETH',last=peter.last)
+    db.session.add(me)
+    db.session.commit()
+    return index()
 
 # To DO:
 # Add list of most used routes
