@@ -53,6 +53,7 @@ class User(db.Model, UserMixin):
     confirmed_at = db.Column(db.DateTime())
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
+    
 
 class Currency(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -62,6 +63,17 @@ class Currency(db.Model, UserMixin):
     bid = db.Column(db.String(255))
     timestamp = db.Column(db.DateTime())
 
+class UserCurrency(db.Model, UserMixin):
+    id=db.Column(db.Integer, primary_key=True)
+    amount = db.Column(db.Float())
+    ticker = db.Column(db.String(255), unique=True)
+    last = db.Column(db.String(255))
+    ask = db.Column(db.String(255))
+    bid = db.Column(db.String(255))
+    timestamp = db.Column(db.DateTime())
+
+
+
 # Setup Flask-Security
 user_datastore = SQLAlchemyUserDatastore(db, User, Currency)
 security = Security(app, user_datastore)
@@ -69,10 +81,9 @@ security = Security(app, user_datastore)
 # Create a user to test with
 @app.before_first_request
 def create_user():
-    if db is None:
+       if db is None:
         db.create_all()
         user_datastore.create_user(email='ryan@gordon.com', password='password',confirmed_at=datetime.datetime.now())
-        user_datastore.create_currency(ticker='btc', last='100.00')
         db.session.commit()
 
 @app.route('/')
@@ -116,11 +127,12 @@ def logout():
 
 @app.route('/addCurrency')
 def addCurrency():
-    peter = Currency.query.filter_by(ticker='BTC_ETH').first()
-    me = users_currencies(amount='100', ticker='BTC_ETH',last=peter.last)
+    peter = Currency.query.filter_by(ticker='BTC_XMR').first()
+    me = UserCurrency(amount='100', ticker=peter.ticker,last=peter.last, bid=peter.bid, ask=peter.last,timestamp=datetime.datetime.now())
+    print(me)
     db.session.add(me)
     db.session.commit()
-    return index()
+    return render_template("index.html")
 
 # To DO:
 # Add list of most used routes
