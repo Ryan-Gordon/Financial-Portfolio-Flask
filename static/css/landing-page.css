@@ -1,0 +1,107 @@
+/*!
+ * Landing page for the web app 
+ * Copyright 2016 Ryan Gordon - G00326349
+ *
+ */
+
+.banner-image {
+    background: url("../img/harambe.jpg") no-repeat fixed;
+    background-size: cover;
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+.banner-image .name {
+    display: block;
+    color: #ffffff;
+    font-family: Montserrat, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 2em;
+    font-weight: 700;
+}
+
+.banner-image .desc {
+    color: #ffffff;
+    font-size: 1.25em;
+    font-weight: 300;
+}
+
+.features {
+    padding-top: 20px;
+    padding-bottom: 50px;
+}
+
+@media (min-width: 768px) {
+    .banner-image {
+        padding-top: 150px;
+        padding-bottom: 150px;
+    }
+    .banner-image .name {
+        font-size: 4.75em;
+    }
+    .banner-image .desc {
+        font-size: 1.75em;
+    }
+    .features {
+        padding-bottom: 100px;
+    }
+}
+
+.footer {
+    color: #ffffff;
+}
+
+.footer h3 {
+    margin-bottom: 30px;
+}
+
+.footer .footer-above {
+    padding-top: 50px;
+    background-color: #2c3e50;
+}
+
+.footer .footer-col {
+    margin-bottom: 50px;
+}
+
+.footer .footer-below {
+    padding: 25px 0;
+    background-color: #233140;
+}
+
+#canvas-holder {
+    width: 240px;
+}
+
+.circle-img li span {
+    display: block;
+    width: 14px;
+    height: 14px;
+    border-radius: 7px;
+    float: left;
+    margin-top: 4px;
+    margin-right: 8px;
+}
+
+.circle-img {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    margin-top: 20px;
+}
+
+.circle-img li {
+    margin-bottom: 4px;
+}
+
+.comm-how {
+    display: inline-block;
+    float: left;
+    color: #979797;
+    width: 55px;
+    text-align: right;
+    margin-right: 20px;
+}
+
+
+/*# sourceMappingURL=theme.css.map */
