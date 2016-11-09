@@ -1,11 +1,21 @@
 from flask import Flask
 from flask import render_template, json
 from flask.ext.sqlalchemy import SQLAlchemy
+from flask_mail import Mail
 from flask.ext.security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, login_required
 import requests
 
 # Create app
+mail = Mail()
+MAIL_SERVER='smtp.gmail.com'
+MAIL_PORT=465
+MAIL_USE_TLS = False
+MAIL_USE_SSL= True
+MAIL_USERNAME = 'ryantest216@gmail.com'
+MAIL_PASSWORD = '99Google99'
 app = Flask(__name__)
+app.config.from_object(__name__)
+mail.init_app(app)
 app.config['DEBUG'] = True
 app.config['SECRET_KEY'] = 'super-secret'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data/data.db'
@@ -42,11 +52,16 @@ security = Security(app, user_datastore)
 def create_user():
     if db is None:
         db.create_all()
-        user_datastore.create_user(email='matt@nobien.net', password='password')
+        user_datastore.create_user(email='ryan@gordon.com', password='password')
         db.session.commit()
 
 @app.route('/')
-def hello_world():
+def landing_page():
+    return render_template("homepage.html")
+
+@app.route('/index')
+@login_required
+def index():
     return render_template("index.html")
 
 @app.route('/logout')
@@ -54,9 +69,8 @@ def logout():
     logout_user(self)
 
 @app.route('/topVolume')
-@login_required
 def top_volume():
-    return "Top volume"
+    return 'Hello'
 
 # To DO:
 # Add list of most used routes
@@ -205,4 +219,4 @@ def BTC_XMR():
     return json.dumps(providedJson)
     # end function
 
-app.run()
+app.run(host='0.0.0.0')
