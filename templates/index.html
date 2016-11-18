@@ -28,6 +28,11 @@
 
 <body>
 
+    <!--jQuery -->
+    <script src="static/js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="static/js/bootstrap.min.js"></script>
     <div id="wrapper" class="toggled">
 
 
@@ -43,7 +48,7 @@
                     <a href="#">Dashboard</a>
                 </li>
                 <li>
-                    <a href="#">Currencies</a>
+                    <a href="/currencies">Currencies</a>
                 </li>
                 <li>
                     <a href="#">Overview</a>
@@ -88,7 +93,7 @@
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
-                        <li class="active text-primary"><a href="/addCurrency" id="demo">Add Currency <span class="sr-only">(current)</span></a></li>
+                        <li class="active text-primary"><a href="/addCurrency/ETH" id="demo">Add Currency <span class="sr-only">(current)</span></a></li>
 
                         <ul class="nav navbar-nav navbar-right">
                             <li><a href="#">Link</a></li>
@@ -107,7 +112,8 @@
             </div>
             <!-- container-fluid -->
         </nav>
-        <!-- Start page content -->
+
+
         <div id="page-content-wrapper">
             <div class="container-fluid">
                 <div class="row">
@@ -125,11 +131,7 @@
     </div>
     <!--wrapper -->
 
-    <!--jQuery -->
-    <script src="static/js/jquery.js"></script>
 
-    <!-- Bootstrap Core JavaScript -->
-    <script src="static/js/bootstrap.min.js"></script>
 
     <!-- Menu Toggle Script -->
     <script>
@@ -140,7 +142,6 @@
 
 
         var cur = document.getElementById("demo");
-
     </script>
 
 </body>

@@ -1,11 +1,12 @@
 from flask import Flask
-from flask import render_template, json
+from flask import render_template, json, redirect, url_for
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask_mail import Mail
-from flask.ext.security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, login_required
+from flask.ext.security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, login_required, current_user
 import requests
 import datetime
 from decimal import *
+from flask import session, g
 # Create app
 mail = Mail()
 MAIL_SERVER='smtp.gmail.com'
@@ -41,6 +42,7 @@ users_currencies = db.Table('users_currencies',
         )
 
 class Role(db.Model, RoleMixin):
+    __tablename__ = "role"
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(80), unique=True)
     description = db.Column(db.String(255))
@@ -54,8 +56,10 @@ class User(db.Model, UserMixin):
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
     
+    
 
 class Currency(db.Model, UserMixin):
+    __tablename__ = "Currency"
     id = db.Column(db.Integer, primary_key=True)
     ticker = db.Column(db.String(255), unique=True)
     last = db.Column(db.String(255))
@@ -64,9 +68,11 @@ class Currency(db.Model, UserMixin):
     timestamp = db.Column(db.DateTime())
 
 class UserCurrency(db.Model, UserMixin):
+    __tablename__ = "users_cur"
     id=db.Column(db.Integer, primary_key=True)
+
     amount = db.Column(db.Float())
-    ticker = db.Column(db.String(255), unique=True)
+    ticker = db.Column(db.String(255), primary_key=True)
     last = db.Column(db.String(255))
     ask = db.Column(db.String(255))
     bid = db.Column(db.String(255))
@@ -84,36 +90,41 @@ def create_user():
        if db is None:
         db.create_all()
         user_datastore.create_user(email='ryan@gordon.com', password='password',confirmed_at=datetime.datetime.now())
+        r = requests.get('https://poloniex.com/public?command=returnTicker')
+        # Pull JSON market data from Bittrex
+        b = requests.get('https://bittrex.com/api/v1.1/public/getmarketsummaries')
+        
+        #Print value to user and assign to variable
+        print(r)
+        data = r.json()
+        #Print value to user and assign to variable
+        print(b)
+        bittrex = b.json()
+    
+        for key in data.keys():
+            print(key)
+            print(data[key]['last'])
+            
+            print(float(data[key]['lowestAsk']))
+            print(Decimal(data[key]['lowestAsk']))
+        
+            print(type(data[key]['lowestAsk']))
+        
+            u = Currency(ticker=key,last=data[key]['last'], ask=data[key]['lowestAsk'],bid=data[key]['highestBid'], timestamp=datetime.datetime.now())
+            db.session.add(u)
+
         db.session.commit()
+def load_user():
+    if session["id"]:
+        user = User.query.filter_by(id=session["id"]).first()
+    else:
+        user = {"email": "Guest"}  # Make it better, use an anonymous User instead
+
+    g.user = user
 
 @app.route('/')
 def landing_page():
     db.create_all()
-    
-    r = requests.get('https://poloniex.com/public?command=returnTicker')
-    # Pull JSON market data from Bittrex
-    b = requests.get('https://bittrex.com/api/v1.1/public/getmarketsummaries')
-    
-    #Print value to user and assign to variable
-    print(r)
-    data = r.json()
-    #Print value to user and assign to variable
-    print(b)
-    bittrex = b.json()
-   
-    for key in data.keys():
-        print(key)
-        print(data[key]['last'])
-        
-        print(float(data[key]['lowestAsk']))
-        print(Decimal(data[key]['lowestAsk']))
-       
-        print(type(data[key]['lowestAsk']))
-       
-        u = Currency(ticker=key,last=data[key]['last'], ask=data[key]['lowestAsk'],bid=data[key]['highestBid'], timestamp=datetime.datetime.now())
-        db.session.add(u)
-
-    db.session.commit()
     return render_template("homepage.html")
 
 @app.route('/index')
@@ -125,14 +136,32 @@ def index():
 def logout():
     logout_user(self)
 
-@app.route('/addCurrency')
-def addCurrency():
-    peter = Currency.query.filter_by(ticker='BTC_XMR').first()
-    me = UserCurrency(amount='100', ticker=peter.ticker,last=peter.last, bid=peter.bid, ask=peter.last,timestamp=datetime.datetime.now())
-    print(me)
-    db.session.add(me)
+
+
+@app.route('/currencies')
+@login_required
+def currencies():
+    return render_template("currencies.html")
+
+@app.route('/addCurrency/<coin>')
+def addCurrency(coin):
+    
+    currency = Currency.query.filter_by(ticker='BTC_'+coin).first()
+    peter = UserCurrency.query.filter_by(ticker='BTC_'+coin, id=current_user.id).first()
+    if peter is not None:
+        
+        peter.amount += 100
+        peter.timestamp=datetime.datetime.now()
+        print("User updated")
+    else:  
+        me = UserCurrency(amount='100',id=current_user.id, ticker=currency.ticker,last=currency.last, bid=currency.bid, ask=currency.last,timestamp=datetime.datetime.now())
+        print(me)
+        db.session.add(me)
+        print("Usered added")
+
+
     db.session.commit()
-    return render_template("index.html")
+    return redirect(url_for('index'))
 
 # To DO:
 # Add list of most used routes
