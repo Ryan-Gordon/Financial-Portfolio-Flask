@@ -69,10 +69,11 @@ class Currency(db.Model, UserMixin):
 
 class UserCurrency(db.Model, UserMixin):
     __tablename__ = "users_cur"
-    id=db.Column(db.Integer, primary_key=True)
+    trans_id = db.Column(db.Integer, primary_key=True, index=True)
+    id=db.Column(db.Integer)
 
     amount = db.Column(db.Float())
-    ticker = db.Column(db.String(255), primary_key=True)
+    ticker = db.Column(db.String(255), )
     last = db.Column(db.String(255))
     ask = db.Column(db.String(255))
     bid = db.Column(db.String(255))
@@ -89,7 +90,7 @@ security = Security(app, user_datastore)
 def create_user():
        if db is None:
         db.create_all()
-        user_datastore.create_user(email='ryan@gordon.com', password='password',confirmed_at=datetime.datetime.now())
+        user_datastore.create_user(email='ryan@gordon2.com', password='password',confirmed_at=datetime.datetime.now())
         r = requests.get('https://poloniex.com/public?command=returnTicker')
         # Pull JSON market data from Bittrex
         b = requests.get('https://bittrex.com/api/v1.1/public/getmarketsummaries')
@@ -114,17 +115,10 @@ def create_user():
             db.session.add(u)
 
         db.session.commit()
-def load_user():
-    if session["id"]:
-        user = User.query.filter_by(id=session["id"]).first()
-    else:
-        user = {"email": "Guest"}  # Make it better, use an anonymous User instead
-
-    g.user = user
 
 @app.route('/')
 def landing_page():
-    db.create_all()
+    
     return render_template("homepage.html")
 
 @app.route('/index')
@@ -137,24 +131,27 @@ def logout():
     logout_user(self)
 
 
-
 @app.route('/currencies')
 @login_required
 def currencies():
-    return render_template("currencies.html")
+    
+    for row in UserCurrency.query.filter(id=current_user.id):
+      
+        g.db.close()
+    return render_template("currencies.html", Currencies=Currencies)
 
-@app.route('/addCurrency/<coin>')
-def addCurrency(coin):
+@app.route('/addCurrency/<coin>&<amt>')
+def addCurrency(coin,amt):
     
     currency = Currency.query.filter_by(ticker='BTC_'+coin).first()
     peter = UserCurrency.query.filter_by(ticker='BTC_'+coin, id=current_user.id).first()
     if peter is not None:
         
-        peter.amount += 100
+        peter.amount += float(amt)
         peter.timestamp=datetime.datetime.now()
         print("User updated")
     else:  
-        me = UserCurrency(amount='100',id=current_user.id, ticker=currency.ticker,last=currency.last, bid=currency.bid, ask=currency.last,timestamp=datetime.datetime.now())
+        me = UserCurrency(amount=float(amt),id=current_user.id, ticker=currency.ticker,last=currency.last, bid=currency.bid, ask=currency.last,timestamp=datetime.datetime.now())
         print(me)
         db.session.add(me)
         print("Usered added")
