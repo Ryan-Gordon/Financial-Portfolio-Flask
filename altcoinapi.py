@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import render_template, json, redirect, url_for
+from flask import render_template, json, redirect, url_for, request
 from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.indexable import index_property
 from flask_mail import Mail
@@ -73,7 +73,7 @@ class UserCurrency(db.Model, UserMixin):
     trans_id = db.Column(db.Integer, primary_key=True, index=True)
     id=db.Column(db.Integer)
 
-    amount = db.Column(db.Decimal())
+    amount = db.Column(db.Numeric())
     ticker = db.Column(db.String(255), )
     last = db.Column(db.String(255))
     ask = db.Column(db.String(255))
@@ -142,14 +142,43 @@ def currencies():
     
     return render_template("currencies.html", Currencies=Currencies)
 
+#Removed Get method, GET method is consider less safe than POST
+@app.route('/addNewCurrency', methods=['POST'])
+def addNewCurrency():
+    amount = request.form['Amount']
+    ticker = request.form['Ticker']
+    currency = Currency.query.filter_by(ticker='BTC_'+ticker).first()
+    peter = UserCurrency.query.filter_by(ticker='BTC_'+ticker, id=current_user.id).first()
+    if peter is not None:
+        print(peter.amount)
+        print(amount)
+        peter.amount += Decimal(amount)
+        print(amount)
+        print(peter.amount)
+        peter.timestamp=datetime.datetime.now()
+        print("User updated")
+    else:  
+        me = UserCurrency(amount=float(amount),id=current_user.id, ticker=currency.ticker,last=currency.last, bid=currency.bid, ask=currency.last,timestamp=datetime.datetime.now())
+        print(me)
+        db.session.add(me)
+        print("Usered added")
+
+
+    db.session.commit()
+    return redirect(url_for('currencies'))
+
+#Removed Get method, GET method is consider less safe than POST
 @app.route('/addCurrency/<coin>&<amt>')
 def addCurrency(coin,amt):
     
     currency = Currency.query.filter_by(ticker='BTC_'+coin).first()
     peter = UserCurrency.query.filter_by(ticker='BTC_'+coin, id=current_user.id).first()
     if peter is not None:
-        
+        print(peter.amount)
+        print(amt)
         peter.amount += Decimal(amt)
+        print(amt)
+        print(peter.amount)
         peter.timestamp=datetime.datetime.now()
         print("User updated")
     else:  
