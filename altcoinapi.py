@@ -74,7 +74,9 @@ class UserCurrency(db.Model, UserMixin):
     id=db.Column(db.Integer)
 
     amount = db.Column(db.Numeric())
-    ticker = db.Column(db.String(255), )
+    ticker = db.Column(db.String(255))
+    priceInBTC = db.Column(db.Numeric())
+    priceInUSD = db.Column(db.Numeric())
     last = db.Column(db.String(255))
     ask = db.Column(db.String(255))
     bid = db.Column(db.String(255))
@@ -146,8 +148,9 @@ def currencies():
 @app.route('/addNewCurrency', methods=['POST'])
 def addNewCurrency():
     amount = request.form['Amount']
-    ticker = request.form['Ticker']
+    ticker = request.form['Ticker'].upper()
     currency = Currency.query.filter_by(ticker='BTC_'+ticker).first()
+    usd2btc = Currency.query.filter_by(ticker='USDT_BTC').first()
     peter = UserCurrency.query.filter_by(ticker='BTC_'+ticker, id=current_user.id).first()
     if peter is not None:
         print(peter.amount)
@@ -156,9 +159,11 @@ def addNewCurrency():
         print(amount)
         print(peter.amount)
         peter.timestamp=datetime.datetime.now()
+        peter.priceInBTC = (float(currency.last)*float(peter.amount))
+        peter.priceInUSD = (peter.priceInBTC * float(usd2btc.last))
         print("User updated")
     else:  
-        me = UserCurrency(amount=float(amount),id=current_user.id, ticker=currency.ticker,last=currency.last, bid=currency.bid, ask=currency.last,timestamp=datetime.datetime.now())
+        me = UserCurrency(amount=float(amount),id=current_user.id, ticker=currency.ticker,last=currency.last, bid=currency.bid, ask=currency.last,timestamp=datetime.datetime.now(), priceInBTC=(float(currency.last)*float(amount)),priceInUSD=(float(usd2btc.last)*float(peter.priceInBTC)))
         print(me)
         db.session.add(me)
         print("Usered added")

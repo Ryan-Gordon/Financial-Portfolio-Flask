@@ -76,7 +76,9 @@ used to vertically center elements, may need modification if you're not using de
                         <th><em class="fa fa-cog"></em></th>
                         <th class="hidden-xs">Amount</th>
                         <th>Ticker</th>
-                        <th>Last</th>
+                        <th>Total in BTC</th>
+                        <th>Total in EUR</th>
+                        <th>Total in USD </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -89,7 +91,9 @@ used to vertically center elements, may need modification if you're not using de
 
                         <td class="hidden-xs">{{thing.amount}}</td>
                         <td>{{ thing.ticker }}</td>
-                        <td>{{ thing.last }}</td>
+                        <td>&#8383; {{ thing.priceInBTC }}</td>
+                        <td>&#128; {{'%0.2f'% thing.priceInBTC| float }}</td>
+                        <td>&#36; {{'%0.2f'%thing.priceInUSD|float }}</td>
                         {% endfor %}
 
                     </tr>
