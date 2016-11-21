@@ -69,25 +69,29 @@ used to vertically center elements, may need modification if you're not using de
             </div>
         </div>
         <div class="panel-body">
+
             <table class="table table-striped table-bordered table-list">
                 <thead>
                     <tr>
                         <th><em class="fa fa-cog"></em></th>
-                        <th class="hidden-xs">ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
+                        <th class="hidden-xs">Amount</th>
+                        <th>Ticker</th>
+                        <th>last</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {% for thing in Currencies %}
                     <tr>
                         <td align="center">
                             <a class="btn btn-default"><em class="fa fa-pencil"></em></a>
                             <a class="btn btn-danger"><em class="fa fa-trash"></em></a>
                         </td>
-                        <td class="hidden-xs">1</td>
-                        <td>John Doe</td>
-                        <td> {% for thing in Currencies %} {{ thing.id }} {{ thing.last }} {{ thing.ticker }} {% endfor %}
-                        </td>
+
+                        <td class="hidden-xs">{{thing.amount}}</td>
+                        <td>{{ thing.ticker }}</td>
+                        <td>{{ thing.last }}</td>
+                        {% endfor %}
+
                     </tr>
                 </tbody>
             </table>

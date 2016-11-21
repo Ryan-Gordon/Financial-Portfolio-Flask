@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import render_template, json, redirect, url_for
 from flask.ext.sqlalchemy import SQLAlchemy
+from sqlalchemy.ext.indexable import index_property
 from flask_mail import Mail
 from flask.ext.security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, login_required, current_user
 import requests
@@ -72,12 +73,13 @@ class UserCurrency(db.Model, UserMixin):
     trans_id = db.Column(db.Integer, primary_key=True, index=True)
     id=db.Column(db.Integer)
 
-    amount = db.Column(db.Float())
+    amount = db.Column(db.Decimal())
     ticker = db.Column(db.String(255), )
     last = db.Column(db.String(255))
     ask = db.Column(db.String(255))
     bid = db.Column(db.String(255))
     timestamp = db.Column(db.DateTime())
+    index = index_property('id', 'index')
 
 
 
@@ -118,7 +120,7 @@ def create_user():
 
 @app.route('/')
 def landing_page():
-    
+    db.create_all()
     return render_template("homepage.html")
 
 @app.route('/index')
@@ -135,9 +137,9 @@ def logout():
 @login_required
 def currencies():
     
-    for row in UserCurrency.query.filter(id=current_user.id):
-      
-        g.db.close()
+    Currencies = UserCurrency.query.filter_by(id=current_user.id).all()
+    print(Currencies)
+    
     return render_template("currencies.html", Currencies=Currencies)
 
 @app.route('/addCurrency/<coin>&<amt>')
@@ -147,7 +149,7 @@ def addCurrency(coin,amt):
     peter = UserCurrency.query.filter_by(ticker='BTC_'+coin, id=current_user.id).first()
     if peter is not None:
         
-        peter.amount += float(amt)
+        peter.amount += Decimal(amt)
         peter.timestamp=datetime.datetime.now()
         print("User updated")
     else:  
