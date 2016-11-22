@@ -163,7 +163,7 @@ def addNewCurrency():
         peter.priceInUSD = (peter.priceInBTC * float(usd2btc.last))
         print("User updated")
     else:  
-        me = UserCurrency(amount=float(amount),id=current_user.id, ticker=currency.ticker,last=currency.last, bid=currency.bid, ask=currency.last,timestamp=datetime.datetime.now(), priceInBTC=(float(currency.last)*float(amount)),priceInUSD=(float(usd2btc.last)*float(peter.priceInBTC)))
+        me = UserCurrency(amount=float(amount),id=current_user.id, ticker=currency.ticker,last=currency.last, bid=currency.bid, ask=currency.last,timestamp=datetime.datetime.now(), priceInBTC=(float(currency.last)*float(amount)),priceInUSD=(float(usd2btc.last)*(float(currency.last)*float(amount))))
         print(me)
         db.session.add(me)
         print("Usered added")
