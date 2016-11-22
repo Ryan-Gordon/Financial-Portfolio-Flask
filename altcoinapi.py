@@ -3,7 +3,8 @@ from flask import render_template, json, redirect, url_for, request
 from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.indexable import index_property
 from flask_mail import Mail
-from flask.ext.security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, login_required, current_user
+from flask.ext.security import Security, SQLAlchemyUserDatastore
+from flask.ext.security import UserMixin, RoleMixin, login_required, current_user
 import requests
 import datetime
 from decimal import *
@@ -22,7 +23,8 @@ mail.init_app(app)
 app.config['DEBUG'] = True
 app.config['SECRET_KEY'] = 'super-secret'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data/database.db'
-app.config['SECURITY_REGISTERABLE'] = True
+app.config['DEBUG'] = True
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 # Create database connection object
 db = SQLAlchemy(app)
@@ -77,6 +79,7 @@ class UserCurrency(db.Model, UserMixin):
     ticker = db.Column(db.String(255))
     priceInBTC = db.Column(db.Numeric())
     priceInUSD = db.Column(db.Numeric())
+    priceInEUR = db.Column(db.Numeric())
     last = db.Column(db.String(255))
     ask = db.Column(db.String(255))
     bid = db.Column(db.String(255))
@@ -92,7 +95,7 @@ security = Security(app, user_datastore)
 # Create a user to test with
 @app.before_first_request
 def create_user():
-       if db is None:
+    if db is None:
         db.create_all()
         user_datastore.create_user(email='ryan@gordon2.com', password='password',confirmed_at=datetime.datetime.now())
         r = requests.get('https://poloniex.com/public?command=returnTicker')
@@ -105,7 +108,7 @@ def create_user():
         #Print value to user and assign to variable
         print(b)
         bittrex = b.json()
-    
+
         for key in data.keys():
             print(key)
             print(data[key]['last'])
@@ -151,20 +154,28 @@ def addNewCurrency():
     ticker = request.form['Ticker'].upper()
     currency = Currency.query.filter_by(ticker='BTC_'+ticker).first()
     usd2btc = Currency.query.filter_by(ticker='USDT_BTC').first()
+    fiat = requests.get('http://api.fixer.io/latest?base=USD')
+    usd2fiat = fiat.json()
     peter = UserCurrency.query.filter_by(ticker='BTC_'+ticker, id=current_user.id).first()
     if peter is not None:
-        print(peter.amount)
-        print(amount)
         peter.amount += Decimal(amount)
-        print(amount)
-        print(peter.amount)
         peter.timestamp=datetime.datetime.now()
         peter.priceInBTC = (float(currency.last)*float(peter.amount))
         peter.priceInUSD = (peter.priceInBTC * float(usd2btc.last))
+        print(usd2fiat['rates']['EUR'])
+        print(str(peter.priceInUSD))
+        print(peter.priceInUSD /usd2fiat['rates']['EUR'])
+        print(peter.priceInUSD *usd2fiat['rates']['EUR'])
+        peter.priceInEUR = peter.priceInUSD * usd2fiat['rates']['EUR']
         print("User updated")
     else:  
-        me = UserCurrency(amount=float(amount),id=current_user.id, ticker=currency.ticker,last=currency.last, bid=currency.bid, ask=currency.last,timestamp=datetime.datetime.now(), priceInBTC=(float(currency.last)*float(amount)),priceInUSD=(float(usd2btc.last)*(float(currency.last)*float(amount))))
+        me = UserCurrency(amount=float(amount), id=current_user.id, ticker=currency.ticker, last=currency.last, bid=currency.bid, ask=currency.last, timestamp=datetime.datetime.now(), priceInBTC=(float(currency.last)*float(amount)), priceInUSD=(float(usd2btc.last)*(float(currency.last)*float(amount))), priceInEUR=( (float(usd2btc.last)*(float(currency.last)*float(amount)) *float(usd2fiat['rates']['EUR'])) ))
         print(me)
+        print(usd2fiat['rates']['EUR'])
+        print((float(usd2btc.last) *float(amount))/float(usd2fiat['rates']['EUR']))
+        print(float(usd2btc.last)*(float(currency.last)*float(amount)))
+        print(   (float(usd2btc.last)*(float(currency.last)*float(amount)) *float(usd2fiat['rates']['EUR']))     )
+
         db.session.add(me)
         print("Usered added")
 
