@@ -23,8 +23,7 @@ mail.init_app(app)
 app.config['DEBUG'] = True
 app.config['SECRET_KEY'] = 'super-secret'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data/database.db'
-app.config['DEBUG'] = True
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+app.config['SECURITY_REGISTERABLE'] = True
 
 # Create database connection object
 db = SQLAlchemy(app)
@@ -95,33 +94,33 @@ security = Security(app, user_datastore)
 # Create a user to test with
 @app.before_first_request
 def create_user():
-    if db is None:
-        db.create_all()
-        user_datastore.create_user(email='ryan@gordon2.com', password='password',confirmed_at=datetime.datetime.now())
-        r = requests.get('https://poloniex.com/public?command=returnTicker')
-        # Pull JSON market data from Bittrex
-        b = requests.get('https://bittrex.com/api/v1.1/public/getmarketsummaries')
-        
-        #Print value to user and assign to variable
-        print(r)
-        data = r.json()
-        #Print value to user and assign to variable
-        print(b)
-        bittrex = b.json()
-
-        for key in data.keys():
-            print(key)
-            print(data[key]['last'])
+        if db is None:
+            db.create_all()
+            user_datastore.create_user(email='ryan@gordon.com', password='password',confirmed_at=datetime.datetime.now())
+            r = requests.get('https://poloniex.com/public?command=returnTicker')
+            # Pull JSON market data from Bittrex
+            b = requests.get('https://bittrex.com/api/v1.1/public/getmarketsummaries')
             
-            print(float(data[key]['lowestAsk']))
-            print(Decimal(data[key]['lowestAsk']))
-        
-            print(type(data[key]['lowestAsk']))
-        
-            u = Currency(ticker=key,last=data[key]['last'], ask=data[key]['lowestAsk'],bid=data[key]['highestBid'], timestamp=datetime.datetime.now())
-            db.session.add(u)
+            #Print value to user and assign to variable
+            print(r)
+            data = r.json()
+            #Print value to user and assign to variable
+            print(b)
+            bittrex = b.json()
 
-        db.session.commit()
+            for key in data.keys():
+                print(key)
+                print(data[key]['last'])
+                
+                print(float(data[key]['lowestAsk']))
+                print(Decimal(data[key]['lowestAsk']))
+            
+                print(type(data[key]['lowestAsk']))
+            
+                u = Currency(ticker=key,last=data[key]['last'], ask=data[key]['lowestAsk'],bid=data[key]['highestBid'], timestamp=datetime.datetime.now())
+                db.session.add(u)
+
+            db.session.commit()
 
 @app.route('/')
 def landing_page():
@@ -150,37 +149,38 @@ def currencies():
 #Removed Get method, GET method is consider less safe than POST
 @app.route('/addNewCurrency', methods=['POST'])
 def addNewCurrency():
-    amount = request.form['Amount']
-    ticker = request.form['Ticker'].upper()
-    currency = Currency.query.filter_by(ticker='BTC_'+ticker).first()
+    amount = request.form['Amount'] #Amount taken from posted form
+    ticker = request.form['Ticker'].upper() #Ticker taken from posted form
+    currency = Currency.query.filter_by(ticker='BTC_'+ticker).first() #query the db for currency
     usd2btc = Currency.query.filter_by(ticker='USDT_BTC').first()
     fiat = requests.get('http://api.fixer.io/latest?base=USD')
     usd2fiat = fiat.json()
-    peter = UserCurrency.query.filter_by(ticker='BTC_'+ticker, id=current_user.id).first()
-    if peter is not None:
-        peter.amount += Decimal(amount)
-        peter.timestamp=datetime.datetime.now()
-        peter.priceInBTC = (float(currency.last)*float(peter.amount))
-        peter.priceInUSD = (peter.priceInBTC * float(usd2btc.last))
-        print(usd2fiat['rates']['EUR'])
-        print(str(peter.priceInUSD))
-        print(peter.priceInUSD /usd2fiat['rates']['EUR'])
-        print(peter.priceInUSD *usd2fiat['rates']['EUR'])
-        peter.priceInEUR = peter.priceInUSD * usd2fiat['rates']['EUR']
-        print("User updated")
-    else:  
-        me = UserCurrency(amount=float(amount), id=current_user.id, ticker=currency.ticker, last=currency.last, bid=currency.bid, ask=currency.last, timestamp=datetime.datetime.now(), priceInBTC=(float(currency.last)*float(amount)), priceInUSD=(float(usd2btc.last)*(float(currency.last)*float(amount))), priceInEUR=( (float(usd2btc.last)*(float(currency.last)*float(amount)) *float(usd2fiat['rates']['EUR'])) ))
-        print(me)
-        print(usd2fiat['rates']['EUR'])
-        print((float(usd2btc.last) *float(amount))/float(usd2fiat['rates']['EUR']))
-        print(float(usd2btc.last)*(float(currency.last)*float(amount)))
-        print(   (float(usd2btc.last)*(float(currency.last)*float(amount)) *float(usd2fiat['rates']['EUR']))     )
+    queriedCur = UserCurrency.query.filter_by(ticker='BTC_'+ticker, id=current_user.id).first()
+    if currency is not None:
+        if queriedCur is not None:
+            queriedCur.amount += Decimal(amount)
+            queriedCur.timestamp=datetime.datetime.now()
+            queriedCur.priceInBTC = (float(currency.last)*float(queriedCur.amount))
+            queriedCur.priceInUSD = (queriedCur.priceInBTC * float(usd2btc.last))
+            print(usd2fiat['rates']['EUR'])
+            print(str(queriedCur.priceInUSD))
+            print(queriedCur.priceInUSD /usd2fiat['rates']['EUR'])
+            print(queriedCur.priceInUSD *usd2fiat['rates']['EUR'])
+            queriedCur.priceInEUR = queriedCur.priceInUSD * usd2fiat['rates']['EUR']
+            print("Currency amount updated in DB")
+        else:  
+            me = UserCurrency(amount=float(amount), id=current_user.id, ticker=currency.ticker, last=currency.last, bid=currency.bid, ask=currency.last, timestamp=datetime.datetime.now(), priceInBTC=(float(currency.last)*float(amount)), priceInUSD=(float(usd2btc.last)*(float(currency.last)*float(amount))), priceInEUR=( (float(usd2btc.last)*(float(currency.last)*float(amount)) *float(usd2fiat['rates']['EUR'])) ))
+            print(me)
+            print(usd2fiat['rates']['EUR'])
+            print((float(usd2btc.last) *float(amount))/float(usd2fiat['rates']['EUR']))
+            print(float(usd2btc.last)*(float(currency.last)*float(amount)))
+            print(   (float(usd2btc.last)*(float(currency.last)*float(amount)) *float(usd2fiat['rates']['EUR']))     )
 
-        db.session.add(me)
-        print("Usered added")
+            db.session.add(me)
+            print("Currency added to DB")
 
 
-    db.session.commit()
+        db.session.commit()
     return redirect(url_for('currencies'))
 
 #Removed Get method, GET method is consider less safe than POST

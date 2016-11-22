@@ -12,7 +12,7 @@
     <title>{% block title %}{% endblock %} Altcoin Portfolio</title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="static/css/bootstrap/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
     <link href="static/css/simple-sidebar.css" rel="stylesheet">
@@ -33,7 +33,7 @@
 
     <!-- Bootstrap Core JavaScript -->
     <script src="static/js/bootstrap.min.js"></script>
-    <div id="wrapper" class="toggled">
+    <div id="wrapper">
 
 
         <!-- Sidebar -->
@@ -76,35 +76,35 @@
         <!-- /#sidebar-wrapper -->
 
         <!-- Page Content -->
-        <nav class="navbar navbar-default">
-            <!-- style="background-color: #58b3f3; -->
+        <nav class="navbar navbar-default" style="background-color: black; ">
+            <!-- style=" background-color: #58b3f3; -->
             <div class="container-fluid">
                 <!-- Brand and toggle get grouped for better mobile display -->
                 <div class="navbar-header">
 
 
-                    <a class="navbar-brand" href="#"><button href="#menu-toggle" id="menu-toggle" type="button" class="btn btn-info btn-sm">
-          <span class="glyphicon glyphicon-menu-hamburger"></span> Menu
-        </button></a>
+                    <a class="navbar-brand" href="#menu-toggle" id="menu-toggle">
+                        <span class="glyphicon glyphicon-menu-hamburger"></span> Menu
+                    </a>
                 </div>
 
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                    <ul class="nav navbar-nav">
-                        <li class="active text-primary"><a href="/addCurrency/ETH" id="demo">Add Currency <span class="sr-only">(current)</span></a></li>
-
-                        <ul class="nav navbar-nav navbar-right">
-                            <li><a href="#">Link</a></li>
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Account <span class="caret"></span></a>
-                                <ul class="dropdown-menu">
-                                    <li><a href="/logout">Log Out</a></li>
-                                    <li><a href="/register">Sign up</a></li>
-                                    <li role="separator" class="divider"></li>
-                                    <li><a href="#">Forgot password?</a></li>
-                                </ul>
-                            </li>
-                        </ul>
+                    <ul class="nav navbar-nav ">
+                        <li class=" text-secondary"><a href="index" id="demo">Home <span class="sr-only">(current)</span></a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="#">Link</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Account <span class="caret"></span></a>
+                            <ul class="dropdown-menu navbar-right">
+                                <li><a href="/logout">Log Out</a></li>
+                                <li><a href="/register">Sign up</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#">Forgot password?</a></li>
+                            </ul>
+                        </li>
+                    </ul>
                 </div>
                 <!--navbar-collapse -->
             </div>

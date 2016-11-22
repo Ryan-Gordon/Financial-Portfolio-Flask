@@ -4,9 +4,10 @@
  * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap/blob/gh-pages/LICENSE)
  */
 
- body {
+body {
     overflow-x: hidden;
- }
+}
+
 
 /* Toggle Styles */
 
@@ -52,6 +53,7 @@
     margin-right: -250px;
 }
 
+
 /* Sidebar Styles */
 
 .sidebar-nav {
@@ -77,7 +79,7 @@
 .sidebar-nav li a:hover {
     text-decoration: none;
     color: #fff;
-    background: rgba(255,255,255,0.2);
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .sidebar-nav li a:active,
@@ -85,58 +87,53 @@
     text-decoration: none;
 }
 
-.sidebar-nav > .sidebar-brand {
+.sidebar-nav>.sidebar-brand {
     height: 65px;
     font-size: 18px;
     line-height: 60px;
 }
 
-.sidebar-nav > .sidebar-brand a {
+.sidebar-nav>.sidebar-brand a {
     color: #999999;
 }
 
-.sidebar-nav > .sidebar-brand a:hover {
+.sidebar-nav>.sidebar-brand a:hover {
     color: #fff;
     background: none;
 }
+
 .footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  /* Set the fixed height of the footer here */
-  height: 60px;
-  background-color: #f5f5f5;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 60px;
+    background-color: #f5f5f5;
 }
+
 .footer-container {
-  width: auto;
-  max-width: 680px;
-  padding: 0 15px;
+    width: auto;
+    max-width: 680px;
+    padding: 0 15px;
 }
-
-
 
 @media(min-width:768px) {
     #wrapper {
         padding-left: 250px;
     }
-
     #wrapper.toggled {
         padding-left: 0;
     }
-
     #sidebar-wrapper {
         width: 250px;
     }
-
     #wrapper.toggled #sidebar-wrapper {
         width: 0;
     }
-
     #page-content-wrapper {
         padding: 20px;
         position: relative;
     }
-
     #wrapper.toggled #page-content-wrapper {
         position: relative;
         margin-right: 0;
