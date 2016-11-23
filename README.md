@@ -8,8 +8,8 @@ The pricing data for a number of currencies is pulled down, aggregated and then 
 ### Roadmap
 
 +Perhaps some stock asset tracking if time perhaps  
++ Dashboard page   
 + Charting for assets  
-+ Create model for the aggregate data and perhaps including single market data in the model
 + Create an API using the webapp's logic so other devs can use it
 + Host api on a hosting provider
 
