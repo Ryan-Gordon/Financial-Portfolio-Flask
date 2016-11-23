@@ -146,6 +146,21 @@ def currencies():
     
     return render_template("currencies.html", Currencies=Currencies)
 
+@app.route('/dashboard')
+@login_required
+def dash():
+    return render_template("dashboard.html")
+
+@app.route('/about')
+@login_required
+def about():
+    return render_template("about.html")
+
+@app.route('/contact')
+@login_required
+def contact():
+    return render_template("contact.html")
+
 #Removed Get method, GET method is consider less safe than POST
 @app.route('/addNewCurrency', methods=['POST'])
 def addNewCurrency():
