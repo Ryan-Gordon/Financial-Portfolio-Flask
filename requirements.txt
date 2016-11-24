@@ -11,6 +11,7 @@ Flask-SQLAlchemy==2.1
 Flask-Testing==0.6.1
 Flask-WTF==0.13.1
 Jinja2==2.8
+requests==2.11.1
 wcwidth==0.1.7
 Werkzeug==0.11.11
 WTForms==2.1
