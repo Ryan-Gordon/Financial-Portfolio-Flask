@@ -1,10 +1,10 @@
 from flask import Flask
 from flask import render_template, json, redirect, url_for, request
-from flask.ext.sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.indexable import index_property
 from flask_mail import Mail
-from flask.ext.security import Security, SQLAlchemyUserDatastore
-from flask.ext.security import UserMixin, RoleMixin, login_required, current_user
+from flask_security import Security, SQLAlchemyUserDatastore
+from flask_security import UserMixin, RoleMixin, login_required, current_user
 import requests
 import datetime
 from decimal import *
@@ -24,6 +24,7 @@ app.config['DEBUG'] = True
 app.config['SECRET_KEY'] = 'super-secret'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data/database.db'
 app.config['SECURITY_REGISTERABLE'] = True
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 # Create database connection object
 db = SQLAlchemy(app)
@@ -94,33 +95,30 @@ security = Security(app, user_datastore)
 # Create a user to test with
 @app.before_first_request
 def create_user():
-        if db is None:
-            db.create_all()
-            user_datastore.create_user(email='ryan@gordon.com', password='password',confirmed_at=datetime.datetime.now())
-            r = requests.get('https://poloniex.com/public?command=returnTicker')
-            # Pull JSON market data from Bittrex
-            b = requests.get('https://bittrex.com/api/v1.1/public/getmarketsummaries')
-            
-            #Print value to user and assign to variable
-            print(r)
-            data = r.json()
-            #Print value to user and assign to variable
-            print(b)
-            bittrex = b.json()
+    if db is None:
+        db.create_all()
+        user_datastore.create_user(email='ryan@gordon.com', password='password', confirmed_at=datetime.datetime.now())
+        r = requests.get('https://poloniex.com/public?command=returnTicker')
+        # Pull JSON market data from Bittrex
+        b = requests.get('https://bittrex.com/api/v1.1/public/getmarketsummaries')
+        #Print value to user and assign to variable
+        print(r)
+        data = r.json()
+        #Print value to user and assign to variable
+        print(b)
+        bittrex = b.json()
 
-            for key in data.keys():
-                print(key)
-                print(data[key]['last'])
-                
-                print(float(data[key]['lowestAsk']))
-                print(Decimal(data[key]['lowestAsk']))
-            
-                print(type(data[key]['lowestAsk']))
-            
-                u = Currency(ticker=key,last=data[key]['last'], ask=data[key]['lowestAsk'],bid=data[key]['highestBid'], timestamp=datetime.datetime.now())
-                db.session.add(u)
+        for key in data.keys():
+            #Test statements - to be removed !!!!!!!
+            print(key)
+            print(data[key]['last'])
+            print(float(data[key]['lowestAsk']))
+            print(Decimal(data[key]['lowestAsk']))
+            print(type(data[key]['lowestAsk']))
+            u = Currency(ticker=key, last=data[key]['last'], ask=data[key]['lowestAsk'], bid=data[key]['highestBid'], timestamp=datetime.datetime.now())
+            db.session.add(u)
 
-            db.session.commit()
+        db.session.commit()
 
 @app.route('/')
 def landing_page():
@@ -140,10 +138,8 @@ def logout():
 @app.route('/currencies')
 @login_required
 def currencies():
-    
     Currencies = UserCurrency.query.filter_by(id=current_user.id).all()
     print(Currencies)
-    
     return render_template("currencies.html", Currencies=Currencies)
 
 @app.route('/dashboard')
@@ -210,9 +206,9 @@ def addCurrency(coin,amt):
         peter.amount += Decimal(amt)
         print(amt)
         print(peter.amount)
-        peter.timestamp=datetime.datetime.now()
+        peter.timestamp = datetime.datetime.now()
         print("User updated")
-    else:  
+    else:
         me = UserCurrency(amount=float(amt),id=current_user.id, ticker=currency.ticker,last=currency.last, bid=currency.bid, ask=currency.last,timestamp=datetime.datetime.now())
         print(me)
         db.session.add(me)
