@@ -1,0 +1,71 @@
+{% extends "index.html" %} {% block title %}Currencies{% endblock %} {% block head %} {{ super() }} {% endblock %} {% block content %}
+<script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script> 
+<h1>Flask Chart.js</h1>
+<!-- bar chart canvas element -->
+
+
+
+
+<div class="container-fluid">
+<div class="row">
+<div class="col-md-8">
+    <div class="card">
+        <div class="header">
+            <h4 class="title">Email Statistics</h4>
+            <p class="category">Last Campaign Performance</p>
+        </div>
+        <div class="content">
+            <canvas id="chart" width="300" height="300"></canvas>
+
+            <div class="footer">
+                <div class="legend">
+                    <i class="fa fa-circle text-info"></i> Open
+                    <i class="fa fa-circle text-danger"></i> Bounce
+                    <i class="fa fa-circle text-warning"></i> Unsubscribe
+                </div>
+                <hr>
+                <div class="stats">
+                    <i class="fa fa-clock-o"></i> Campaign sent 2 days ago
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+                    
+
+
+
+<script> 
+function makePieChart(){
+    
+    var pieData = [
+            {% for item,label,colors in set %}
+                {
+                    value: {{item}},
+                    label: "{{label}}",
+                    color : "{{colors}}"
+                },
+                {% endfor %}
+ 
+ 
+         ];
+ 
+   // get bar chart canvas
+   var mychart = document.getElementById("chart").getContext("2d");
+ 
+   steps = 10
+   max = 10
+   // draw pie chart
+   new Chart(document.getElementById("chart").getContext("2d")).Pie(pieData);
+ 
+}
+makePieChart();
+</script>
+</body>
+
+</html>
+
+{% endblock %}

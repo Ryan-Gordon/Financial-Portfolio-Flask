@@ -1,6 +1,6 @@
 import os
 from flask import Flask
-from flask import render_template, json, redirect, url_for, request
+from flask import render_template, json, redirect, url_for, request, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.indexable import index_property
 from flask_mail import Mail
@@ -21,7 +21,7 @@ MAIL_PASSWORD = '99Google99'
 app = Flask(__name__)
 app.config.from_object(__name__)
 mail.init_app(app)
-app.config['DEBUG'] = True
+app.config['DEBUG'] = False
 app.config['SECRET_KEY'] = 'super-secret'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data/database.db'
 app.config['SECURITY_REGISTERABLE'] = True
@@ -161,6 +161,7 @@ def contact():
 #Removed Get method, GET method is consider less safe than POST
 @app.route('/addNewCurrency', methods=['POST'])
 def addNewCurrency():
+    
     amount = request.form['Amount'] #Amount taken from posted form
     ticker = request.form['Ticker'].upper() #Ticker taken from posted form
     currency = Currency.query.filter_by(ticker='BTC_'+ticker).first() #query the db for currency
@@ -193,6 +194,8 @@ def addNewCurrency():
 
 
         db.session.commit()
+    else:
+        flash('Unrecognised Ticker. Please select one of the supported tickers')
     return redirect(url_for('currencies'))
 
 #Removed Get method, GET method is consider less safe than POST
@@ -219,6 +222,13 @@ def addCurrency(coin,amt):
     db.session.commit()
     return redirect(url_for('index'))
 
+
+@app.route("/charts")
+def chart():
+    labels = ["January","February","March","April","May","June","July","August"]
+    values = [10,9,8,7,6,4,7,8]
+    colors = [ "#F7464A", "#46BFBD", "#FDB45C", "#FEDCBA","#ABCDEF", "#DDDDDD", "#ABCABC"  ]
+    return render_template('charts.html', set=zip(values, labels, colors))
 # To DO:
 # Add list of most used routes
 # Add page that can add coins
