@@ -2,37 +2,29 @@
 <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script> 
 <h1>Flask Chart.js</h1>
 <!-- bar chart canvas element -->
+<br>
+<h2>Currency Charts</h2>
 
-
-
-
-<div class="container-fluid">
-<div class="row">
-<div class="col-md-8">
-    <div class="card">
-        <div class="header">
-            <h4 class="title">Email Statistics</h4>
-            <p class="category">Last Campaign Performance</p>
-        </div>
-        <div class="content">
-            <canvas id="chart" width="300" height="300"></canvas>
-
-            <div class="footer">
-                <div class="legend">
-                    <i class="fa fa-circle text-info"></i> Open
-                    <i class="fa fa-circle text-danger"></i> Bounce
-                    <i class="fa fa-circle text-warning"></i> Unsubscribe
-                </div>
-                <hr>
-                <div class="stats">
-                    <i class="fa fa-clock-o"></i> Campaign sent 2 days ago
-                </div>
-            </div>
-        </div>
+<div class="container">
+      <div class="row">
+        <div class="col-md-4">
+            <canvas id="chart" width="300" height="300">
+              Sorry, your browser doesn't support the &lt;canvas&gt; element.
+            </canvas>
+            <div id="legendDiv"></div>
+        </div> <!-- /col-md-4 -->
+        <div class="col-md-4">
+            <p>item 1: Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+        </div> <!-- /col-md-4 -->
+        <div class="col-md-4">
+            <p>item 2: Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+        </div> <!-- /col-md-4 -->
+      </div> <!-- /row -->
     </div>
-</div>
-</div>
-</div>
+
+
+            
+
 
                     
 
@@ -59,7 +51,38 @@ function makePieChart(){
    steps = 10
    max = 10
    // draw pie chart
-   new Chart(document.getElementById("chart").getContext("2d")).Pie(pieData);
+   var piechart= new Chart(document.getElementById("chart").getContext("2d")).Pie(pieData);
+       document.getElementById("legendDiv").innerHTML = piechart.generateLegend();
+
+   var dataPreferences = {
+            series: [
+                [25, 30, 20, 25]
+            ]
+        };
+        
+        var optionsPreferences = {
+            donut: true,
+            donutWidth: 40,
+            startAngle: 0,
+            total: 100,
+            showLabel: false,
+            axisX: {
+                showGrid: false
+            }
+        };
+    
+        Chartist.Pie('#chartPreferences', dataPreferences, optionsPreferences);
+        
+        Chartist.Pie('#chartPreferences', {
+          labels: [{% for item,label,colors in set %}
+          "{{label}}",
+          {% endfor %}
+          ],
+          series: [{% for item,label,colors in set %}
+          
+          {{item}}
+          {% endfor %}]
+        });  
  
 }
 makePieChart();

@@ -1,0 +1,63 @@
+.card .ct-chart {
+  margin: 30px 0 30px;
+  height: 245px;
+}
+
+.ct-perfect-fourth {
+  display: block;
+  position: relative;
+  width: 100%;
+}
+.ct-perfect-fourth:before {
+  display: block;
+  float: left;
+  content: "";
+  width: 0;
+  height: 0;
+  padding-bottom: 75%;
+}
+.ct-perfect-fourth:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.ct-perfect-fourth > svg {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.card .footer .legend {
+  padding: 5px 0;
+}
+
+.card .footer {
+  padding: 0;
+  background-color: transparent;
+  line-height: 30px;
+}
+.card .footer .legend {
+  padding: 5px 0;
+}
+.card .footer hr {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+.card .stats {
+  color: #a9a9a9;
+}
+.card .footer div {
+  display: inline-block;
+}
+
+.card .category,
+.card label {
+  font-size: 14px;
+  font-weight: 400;
+  color: #9A9A9A;
+  margin-bottom: 0px;
+}
+.card .category i,
+.card label i {
+  font-size: 16px;
+}
