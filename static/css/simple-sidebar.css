@@ -56,8 +56,16 @@ body {
 
 /* Extra Style for Menu Bar */
 
-* {
+#wrapper nav {
     border-radius: 0 !important;
+    background-color: #2c3e50;
+}
+
+
+/* We want the nav's buttons to be white in this case */
+
+#wrapper nav a {
+    color: #ffffff;
 }
 
 
