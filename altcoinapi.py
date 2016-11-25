@@ -21,10 +21,11 @@ MAIL_PASSWORD = '99Google99'
 app = Flask(__name__)
 app.config.from_object(__name__)
 mail.init_app(app)
-app.config['DEBUG'] = False
+app.config['DEBUG'] = True
 app.config['SECRET_KEY'] = 'super-secret'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data/database.db'
 app.config['SECURITY_REGISTERABLE'] = True
+app.config['SECURITY_RECOVERABLE'] = True
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 # Create database connection object
@@ -375,7 +376,7 @@ def BTC_XMR():
     # data['BTC_SDC']
     return json.dumps(providedJson)
     # end function
-if __name__ == '__main__':
-    # Bind to PORT if defined, otherwise default to 5000.
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0')
+
+# Bind to PORT if defined, otherwise default to 5000.
+port = int(os.environ.get('PORT', 5000))
+app.run(host='0.0.0.0')
