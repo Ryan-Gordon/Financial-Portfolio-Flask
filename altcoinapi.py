@@ -10,7 +10,8 @@ import requests
 import datetime
 from decimal import *
 from flask import session, g
-# Create app
+# Setup flask_mail. This is used to email users
+# Can send a welcome email on registration or forgotten password link
 mail = Mail()
 MAIL_SERVER='smtp.gmail.com'
 MAIL_PORT=465
@@ -18,20 +19,20 @@ MAIL_USE_TLS = False
 MAIL_USE_SSL= True
 MAIL_USERNAME = 'ryantest216@gmail.com'
 MAIL_PASSWORD = '99Google99'
-app = Flask(__name__)
-app.config.from_object(__name__)
-mail.init_app(app)
-app.config['DEBUG'] = True
-app.config['SECRET_KEY'] = 'super-secret'
+app = Flask(__name__) # Setup flask app 
+app.config.from_object(__name__) # Setup app config 
+mail.init_app(app) # Initialise flask_mail with this app
+# @Config settings
+app.config['DEBUG'] = True # Disable this when ready for production
+app.config['SECRET_KEY'] = 'super-secret' 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data/database.db'
-app.config['SECURITY_REGISTERABLE'] = True
-app.config['SECURITY_RECOVERABLE'] = True
+app.config['SECURITY_REGISTERABLE'] = True # This enables the register option for flask_security
+app.config['SECURITY_RECOVERABLE'] = True # This enables the forgot password option for flask_security
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
-# Create database connection object
-db = SQLAlchemy(app)
+db = SQLAlchemy(app) # Create database connection object with SQLAlchemy
 
-# Define models
+# Define models for db
 roles_users = db.Table('roles_users',
         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
         db.Column('role_id', db.Integer(), db.ForeignKey('role.id')))
@@ -45,13 +46,16 @@ users_currencies = db.Table('users_currencies',
         db.Column('ask', db.Float())
         
         )
-
+# This class is used to model the table which will hold Users
+# Contains a backreference to the Role class for User/Admin role possiblities
 class Role(db.Model, RoleMixin):
     __tablename__ = "role"
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(80), unique=True)
     description = db.Column(db.String(255))
 
+# This class is used to model the table which will hold Users
+# Contains a backreference to the Role class for User/Admin role possiblities
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), unique=True)
@@ -62,7 +66,8 @@ class User(db.Model, UserMixin):
                             backref=db.backref('users', lazy='dynamic'))
     
     
-
+# This class is used to model the table which will hold the currencies themselves
+# Information acquired via the /GET/ method of a publicly available REST API
 class Currency(db.Model, UserMixin):
     __tablename__ = "Currency"
     id = db.Column(db.Integer, primary_key=True)
@@ -72,6 +77,8 @@ class Currency(db.Model, UserMixin):
     bid = db.Column(db.String(255))
     timestamp = db.Column(db.DateTime())
 
+# This class is used to model the table which will hold each users currency
+# Contains id as a foreign key from User 
 class UserCurrency(db.Model, UserMixin):
     __tablename__ = "users_cur"
     trans_id = db.Column(db.Integer, primary_key=True, index=True)
@@ -90,7 +97,7 @@ class UserCurrency(db.Model, UserMixin):
 
 
 
-# Setup Flask-Security
+# Setup user_datastore and sqlalchemy for flask_security to use
 user_datastore = SQLAlchemyUserDatastore(db, User, Currency)
 security = Security(app, user_datastore)
 
@@ -122,43 +129,45 @@ def create_user():
 
         db.session.commit()
 
+# The default route. Provides a landing page with info about the app and options to login/register
 @app.route('/')
 def landing_page():
     db.create_all()
     return render_template("homepage.html")
-
+# This route provides a basic UI view of the app with no content. Will be removed in production
 @app.route('/index')
 @login_required
 def index():
     return render_template("index.html")
-
+# Dummy function used to test log outs. Needs to be implemented into a button or something
 @app.route('/logout')
 def logout():
     logout_user(self)
 
-
+# This route provides shows all the currencies for the user if any.
 @app.route('/currencies')
 @login_required
 def currencies():
     Currencies = UserCurrency.query.filter_by(id=current_user.id).all()
     print(Currencies)
     return render_template("currencies.html", Currencies=Currencies)
-
+# This route is the main starter view of the app and contains info from the other sections
 @app.route('/dashboard')
 @login_required
 def dash():
     return render_template("dashboard.html")
-
+# This route provides an about me page for me the creator. Needs work
 @app.route('/about')
 @login_required
 def about():
     return render_template("about.html")
-
+# This route provides contact links. May need work
 @app.route('/contact')
 @login_required
 def contact():
     return render_template("contact.html")
 
+# This route is used when a user adds a new currency. Info is submitted to server via POST.
 #Removed Get method, GET method is consider less safe than POST
 @app.route('/addNewCurrency', methods=['POST'])
 def addNewCurrency():
@@ -199,7 +208,7 @@ def addNewCurrency():
         flash('Unrecognised Ticker. Please select one of the supported tickers')
     return redirect(url_for('currencies'))
 
-#Removed Get method, GET method is consider less safe than POST
+# My first idea on how to get currencies from the system. Works just as well however not usuable via a form so had to change
 @app.route('/addCurrency/<coin>&<amt>')
 def addCurrency(coin,amt):
     
@@ -223,20 +232,18 @@ def addCurrency(coin,amt):
     db.session.commit()
     return redirect(url_for('index'))
 
-
+# Charts view for user variables
 @app.route("/charts")
 def chart():
     labels = ["January","February","March","April","May","June","July","August"]
     values = [10,9,8,7,6,4,7,8]
     colors = [ "#F7464A", "#46BFBD", "#FDB45C", "#FEDCBA","#ABCDEF", "#DDDDDD", "#ABCABC"  ]
     return render_template('charts.html', set=zip(values, labels, colors))
-# To DO:
-# Add list of most used routes
-# Add page that can add coins
-
 
 ### This starts the API section
+### inseert some api doc here
 
+###code needs commenting from here - ec499196
 @app.route('/api/sdc')
 @login_required
 def BTC_SDC():
