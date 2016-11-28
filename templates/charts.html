@@ -8,11 +8,25 @@
 <div class="container">
       <div class="row">
         <div class="col-md-4">
-            <canvas id="chart" width="300" height="300">
+    <div class="well">
+         <div class="widget-head">
+                <h5>Details</h5>
+            </div>
+           
+    </div>
+        </div>
+        
+  </div> <!-- /col-md-4 -->
+  <div class="panel panel-default">
+                <div class="panel-heading">A header Panel</div>
+
+    <div class="panel-body">
+        <canvas id="chart" width="300" height="300">
               Sorry, your browser doesn't support the &lt;canvas&gt; element.
             </canvas>
-            <div id="legendDiv"></div>
-        </div> <!-- /col-md-4 -->
+        
+        </div>
+    <div class="panel-footer"> <div id="legendDiv"></div></div>
         <div class="col-md-4">
             <p>item 1: Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
         </div> <!-- /col-md-4 -->
@@ -53,7 +67,6 @@ function makePieChart(){
    // draw pie chart
    var piechart= new Chart(document.getElementById("chart").getContext("2d")).Pie(pieData);
        document.getElementById("legendDiv").innerHTML = piechart.generateLegend();
-
    var dataPreferences = {
             series: [
                 [25, 30, 20, 25]
@@ -71,18 +84,7 @@ function makePieChart(){
             }
         };
     
-        Chartist.Pie('#chartPreferences', dataPreferences, optionsPreferences);
         
-        Chartist.Pie('#chartPreferences', {
-          labels: [{% for item,label,colors in set %}
-          "{{label}}",
-          {% endfor %}
-          ],
-          series: [{% for item,label,colors in set %}
-          
-          {{item}}
-          {% endfor %}]
-        });  
  
 }
 makePieChart();

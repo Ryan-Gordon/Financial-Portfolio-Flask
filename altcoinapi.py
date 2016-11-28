@@ -235,8 +235,20 @@ def addCurrency(coin,amt):
 # Charts view for user variables
 @app.route("/charts")
 def chart():
-    labels = ["January","February","March","April","May","June","July","August"]
-    values = [10,9,8,7,6,4,7,8]
+    labels = []
+    values = []
+
+    Currencies = UserCurrency.query.filter_by(id=current_user.id).all()
+    for row in Currencies:
+        print("Hello")
+        print(row.ticker)
+        print(str(row.last))
+        labels.append(row.ticker)
+        values.append(row.amount)
+    
+    print(labels)
+    print(values)
+    
     colors = [ "#F7464A", "#46BFBD", "#FDB45C", "#FEDCBA","#ABCDEF", "#DDDDDD", "#ABCABC"  ]
     return render_template('charts.html', set=zip(values, labels, colors))
 
