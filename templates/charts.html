@@ -7,7 +7,7 @@
 
 <div class="container">
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-5">
             <div class="panel panel-default">
                 <div class="panel-heading">Currencies Amounts</div> <!-- /panel-heading-->
 
@@ -21,7 +21,7 @@
         </div><!-- End panel div -->
         
   </div> <!-- /col-md-4 -->
-  <div class="col-md-4">
+  <div class="col-md-5">
             <div class="panel panel-default">
                 <div class="panel-heading">Value in EUR</div> <!-- /panel-heading-->
 
@@ -35,14 +35,40 @@
         </div><!-- End panel div -->
         
   </div> <!-- /col-md-4 -->
-  
-   
-        <div class="col-md-4">
-            <p>item 1: Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
-        </div> <!-- /col-md-4 -->
-        <div class="col-md-4">
-            <p>item 2: Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
-        </div> <!-- /col-md-4 -->
+
+      </div> <!-- /row -->
+
+      <div class="row">
+        <div class="col-md-5">
+            <div class="panel panel-default">
+                <div class="panel-heading">Value in GBP</div> <!-- /panel-heading-->
+
+    <div class="panel-body">
+        <canvas id="chartGBP" width="300" height="300">
+              Sorry, your browser doesn't support the &lt;canvas&gt; element.
+            </canvas>
+        
+        </div><!-- /panel-body-->
+         <div class="panel-footer"> <div id="legendDiv3"></div></div> <!-- /panel-footer-->
+        </div><!-- End panel div -->
+        
+  </div> <!-- /col-md-4 -->
+
+  <div class="col-md-5">
+            <div class="panel panel-default">
+                <div class="panel-heading">Value in USD</div> <!-- /panel-heading-->
+
+    <div class="panel-body">
+        <canvas id="chartUSD" width="300" height="300">
+              Sorry, your browser doesn't support the &lt;canvas&gt; element.
+            </canvas>
+        
+        </div><!-- /panel-body-->
+         <div class="panel-footer"> <div id="legendDiv4"></div></div> <!-- /panel-footer-->
+        </div><!-- End panel div -->
+        
+  </div> <!-- /col-md-4 -->
+
       </div> <!-- /row -->
     </div>
 
@@ -60,9 +86,9 @@ function makePieChart(){
 
     
     var pieData = [
-            {% for item, euros, label,colors in set %}
+            {% for amount, euros, dollars, label, colors in set %}
                 {
-                    value: {{item}},  //value comes from jinja
+                    value: {{amount}},  //value comes from jinja
                     label: "{{label}}", //label used for 
                     color : "{{colors}}"
                 },  
@@ -71,7 +97,7 @@ function makePieChart(){
  
          ];
     var pieData2 = [
-            {% for item, euros, label,colors in set %}
+            {% for amount, euros, dollars, label,colors in set %}
                 {
                     value: {{euros}},
                     label: "{{label}}",
@@ -81,6 +107,34 @@ function makePieChart(){
  
  
          ];
+        
+    var pieDataUSD = [
+            {% for amount, euros, dollars, label,colors in set %}
+                {
+                    value: {{dollars}},
+                    label: "{{label}}",
+                    color : "{{colors}}"
+                },
+                {% endfor %}
+ 
+ 
+         ];
+
+    var optionsPie = {
+        tooltipEvents: [],
+        showTooltips: false,
+        onAnimationComplete: function() {
+            this.showTooltip(this.segments, true);
+        },
+        tooltipTemplate: "<%= label %> - <%= value %>",
+        
+    }
+
+    /*
+    *For customer legend template
+    * http://stackoverflow.com/questions/20397512/how-can-labels-legends-be-added-for-all-chart-types-in-chart-js-chartjs-org
+    * Not working yet, need to understand better
+    */
  
    // get bar chart canvas
    var mychart = document.getElementById("chartEUR").getContext("2d");
@@ -104,7 +158,15 @@ function makePieChart(){
     var piechart2= new Chart(mychart).Pie(pieData2);
        document.getElementById("legendDiv2").innerHTML = piechart2.generateLegend();
 
-        
+//To DO:
+//set up pie chart for third chart containing GBP data
+/*
+var piechartGBP= new Chart(document.getElementById("chartGBP").getContext("2d")).Pie(pieData3,optionsPie);
+       document.getElementById("legendDiv3").innerHTML = piechartGBP.generateLegend();
+       */
+//set up pie chart for fourth chart containing USD data
+var piechartUSD= new Chart(document.getElementById("chartUSD").getContext("2d")).Pie(pieDataUSD);
+       document.getElementById("legendDiv4").innerHTML = piechartUSD.generateLegend();
  
 }
 makePieChart();

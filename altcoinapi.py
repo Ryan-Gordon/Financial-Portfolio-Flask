@@ -64,8 +64,6 @@ class User(db.Model, UserMixin):
     confirmed_at = db.Column(db.DateTime())
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
-    
-    
 # This class is used to model the table which will hold the currencies themselves
 # Information acquired via the /GET/ method of a publicly available REST API
 class Currency(db.Model, UserMixin):
@@ -151,6 +149,16 @@ def currencies():
     Currencies = UserCurrency.query.filter_by(id=current_user.id).all()
     print(Currencies)
     return render_template("currencies.html", Currencies=Currencies)
+
+# This route is the main starter view of the app and contains info from the other sections
+@app.route('/stocks')
+@login_required
+def stocks():
+    # We want the price of 5+ stocks 
+    # http://finance.google.com/finance/info?client=ig&q=NASDAQ%3AAAPL,GOOG,MSFT,AMZN,TWTR
+    # Use this to access the stock prices or perhaps use a better one if one exists 
+    # this should ebe the same crack as it was with the Poloniex and Bittrex API
+    return render_template("stocks.html")
 # This route is the main starter view of the app and contains info from the other sections
 @app.route('/dashboard')
 @login_required
@@ -238,6 +246,8 @@ def chart():
     labels = []
     valuesAmount = []
     valuesInEur = []
+    # valuesInGBP = []
+    valuesInUSD = []
 
     Currencies = UserCurrency.query.filter_by(id=current_user.id).all()
     for row in Currencies:
@@ -247,11 +257,11 @@ def chart():
         labels.append(row.ticker)
         valuesAmount.append(row.amount)
         valuesInEur.append(row.priceInEUR)
-    
-    
-    
-    colors = [ "#F7464A", "#46BFBD", "#FDB45C", "#FEDCBA","#ABCDEF", "#DDDDDD", "#ABCABC"  ]
-    return render_template('charts.html', set=list(zip(valuesAmount ,valuesInEur, labels, colors)))
+        # valuesInGBP.append(row.priceInGBP)
+        valuesInUSD.append(row.priceInUSD)
+
+    colors = [ "#F7464A", "#46BFBD", "#FDB45C", "#FEDCBA", "#ABCDEF", "#DDDDDD", "#ABCABC"]
+    return render_template('charts.html', set=list(zip(valuesAmount, valuesInEur, valuesInUSD, labels, colors)))
 
 ### This starts the API section
 ### inseert some api doc here
