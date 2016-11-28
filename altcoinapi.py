@@ -408,5 +408,6 @@ def BTC_XMR():
     # end function
 
 # Bind to PORT if defined, otherwise default to 5000.
+# I have this here for Heroku as Heroku needs the ability to specify a port
 port = int(os.environ.get('PORT', 5000))
 app.run(host='0.0.0.0')
