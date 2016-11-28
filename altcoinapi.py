@@ -236,7 +236,8 @@ def addCurrency(coin,amt):
 @app.route("/charts")
 def chart():
     labels = []
-    values = []
+    valuesAmount = []
+    valuesInEur = []
 
     Currencies = UserCurrency.query.filter_by(id=current_user.id).all()
     for row in Currencies:
@@ -244,13 +245,13 @@ def chart():
         print(row.ticker)
         print(str(row.last))
         labels.append(row.ticker)
-        values.append(row.amount)
+        valuesAmount.append(row.amount)
+        valuesInEur.append(row.priceInEUR)
     
-    print(labels)
-    print(values)
+    
     
     colors = [ "#F7464A", "#46BFBD", "#FDB45C", "#FEDCBA","#ABCDEF", "#DDDDDD", "#ABCABC"  ]
-    return render_template('charts.html', set=zip(values, labels, colors))
+    return render_template('charts.html', set=list(zip(valuesAmount ,valuesInEur, labels, colors)))
 
 ### This starts the API section
 ### inseert some api doc here

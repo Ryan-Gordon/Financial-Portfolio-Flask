@@ -8,25 +8,35 @@
 <div class="container">
       <div class="row">
         <div class="col-md-4">
-    <div class="well">
-         <div class="widget-head">
-                <h5>Details</h5>
-            </div>
-           
-    </div>
-        </div>
-        
-  </div> <!-- /col-md-4 -->
-  <div class="panel panel-default">
-                <div class="panel-heading">A header Panel</div>
+            <div class="panel panel-default">
+                <div class="panel-heading">Currencies Amounts</div> <!-- /panel-heading-->
 
     <div class="panel-body">
         <canvas id="chart" width="300" height="300">
               Sorry, your browser doesn't support the &lt;canvas&gt; element.
             </canvas>
         
-        </div>
-    <div class="panel-footer"> <div id="legendDiv"></div></div>
+        </div><!-- /panel-body-->
+         <div class="panel-footer"> <div id="legendDiv"></div></div> <!-- /panel-footer-->
+        </div><!-- End panel div -->
+        
+  </div> <!-- /col-md-4 -->
+  <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">Value in EUR</div> <!-- /panel-heading-->
+
+    <div class="panel-body">
+        <canvas id="chartEUR" width="300" height="300">
+              Sorry, your browser doesn't support the &lt;canvas&gt; element.
+            </canvas>
+        
+        </div><!-- /panel-body-->
+         <div class="panel-footer"> <div id="legendDiv2"></div></div> <!-- /panel-footer-->
+        </div><!-- End panel div -->
+        
+  </div> <!-- /col-md-4 -->
+  
+   
         <div class="col-md-4">
             <p>item 1: Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
         </div> <!-- /col-md-4 -->
@@ -46,11 +56,24 @@
 
 <script> 
 function makePieChart(){
+
+
     
     var pieData = [
-            {% for item,label,colors in set %}
+            {% for item, euros, label,colors in set %}
                 {
-                    value: {{item}},
+                    value: {{item}},  //value comes from jinja
+                    label: "{{label}}", //label used for 
+                    color : "{{colors}}"
+                },  
+                {% endfor %}
+ 
+ 
+         ];
+    var pieData2 = [
+            {% for item, euros, label,colors in set %}
+                {
+                    value: {{euros}},
                     label: "{{label}}",
                     color : "{{colors}}"
                 },
@@ -60,30 +83,27 @@ function makePieChart(){
          ];
  
    // get bar chart canvas
-   var mychart = document.getElementById("chart").getContext("2d");
+   var mychart = document.getElementById("chartEUR").getContext("2d");
  
    steps = 10
    max = 10
    // draw pie chart
+
+
    var piechart= new Chart(document.getElementById("chart").getContext("2d")).Pie(pieData);
        document.getElementById("legendDiv").innerHTML = piechart.generateLegend();
-   var dataPreferences = {
-            series: [
-                [25, 30, 20, 25]
-            ]
-        };
-        
-        var optionsPreferences = {
-            donut: true,
-            donutWidth: 40,
-            startAngle: 0,
-            total: 100,
-            showLabel: false,
-            axisX: {
-                showGrid: false
-            }
-        };
-    
+
+
+//Issues : Only one Piechart is getting displayed. Issues showing with use of multiple svg elements
+//Appears as if its caused by Jinja iterating over the set and then not properly iterating over the set again
+//Resolution: Adapting this answer http://stackoverflow.com/questions/13651965/iterate-over-the-same-list-twice-in-jinja2
+// iterables do not allow for second iterations in Jinja, changing my data zip to list(zip(data)) allows multiple iterations
+//to make this work we need to iterate over the entire set not just the values we need
+
+//set up pie chart for second chart this one will have euro prices
+    var piechart2= new Chart(mychart).Pie(pieData2);
+       document.getElementById("legendDiv2").innerHTML = piechart2.generateLegend();
+
         
  
 }
