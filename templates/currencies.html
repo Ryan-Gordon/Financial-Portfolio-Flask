@@ -143,8 +143,8 @@ used to vertically center elements, may need modification if you're not using de
                     <tr>
 
                         <td align="center">
-                            <a class="btn btn-default"><span class="glyphicon glyphicon-pencil"></span></a>
-                            <a class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></a>
+                            <a class="btn btn-default" ><span class="glyphicon glyphicon-pencil"> </span></a>
+                            <a class="btn btn-danger" href=="{{url_for('deleteentry', ticker=thing.ticker)}}"><span class="glyphicon glyphicon-trash"></span></a>
                         </td>
                         <td data-title="Ticker">{{ thing.ticker }}</td>
                         <td data-title="Amount" class="numeric">{{'%0.5f'% thing.amount |float}}</td>

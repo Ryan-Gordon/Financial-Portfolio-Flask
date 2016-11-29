@@ -87,6 +87,7 @@ class UserCurrency(db.Model, UserMixin):
     priceInBTC = db.Column(db.Numeric())
     priceInUSD = db.Column(db.Numeric())
     priceInEUR = db.Column(db.Numeric())
+    priceInCHY = db.Column(db.Numeric())
     last = db.Column(db.String(255))
     ask = db.Column(db.String(255))
     bid = db.Column(db.String(255))
@@ -198,9 +199,10 @@ def addNewCurrency():
             print(queriedCur.priceInUSD /usd2fiat['rates']['EUR'])
             print(queriedCur.priceInUSD *usd2fiat['rates']['EUR'])
             queriedCur.priceInEUR = queriedCur.priceInUSD * usd2fiat['rates']['EUR']
+            queriedCur.prineInCHY = queriedCur.priceInUSD * usd2fiat['rates']['CNY']
             print("Currency amount updated in DB")
         else:  
-            me = UserCurrency(amount=float(amount), id=current_user.id, ticker=currency.ticker, last=currency.last, bid=currency.bid, ask=currency.last, timestamp=datetime.datetime.now(), priceInBTC=(float(currency.last)*float(amount)), priceInUSD=(float(usd2btc.last)*(float(currency.last)*float(amount))), priceInEUR=( (float(usd2btc.last)*(float(currency.last)*float(amount)) *float(usd2fiat['rates']['EUR'])) ))
+            me = UserCurrency(amount=float(amount), id=current_user.id, ticker=currency.ticker, last=currency.last, bid=currency.bid, ask=currency.last, timestamp=datetime.datetime.now(), priceInBTC=(float(currency.last)*float(amount)), priceInUSD=(float(usd2btc.last)*(float(currency.last)*float(amount))), priceInEUR=( (float(usd2btc.last)*(float(currency.last)*float(amount)) *float(usd2fiat['rates']['EUR'])) ), priceInCHY=( (float(usd2btc.last)*(float(currency.last)*float(amount)) *float(usd2fiat['rates']['CNY'])) ))
             print(me)
             print(usd2fiat['rates']['EUR'])
             print((float(usd2btc.last) *float(amount))/float(usd2fiat['rates']['EUR']))
@@ -216,30 +218,19 @@ def addNewCurrency():
         flash('Unrecognised Ticker. Please select one of the supported tickers')
     return redirect(url_for('currencies'))
 
-# My first idea on how to get currencies from the system. Works just as well however not usuable via a form so had to change
-@app.route('/addCurrency/<coin>&<amt>')
-def addCurrency(coin,amt):
-    
-    currency = Currency.query.filter_by(ticker='BTC_'+coin).first()
-    peter = UserCurrency.query.filter_by(ticker='BTC_'+coin, id=current_user.id).first()
-    if peter is not None:
-        print(peter.amount)
-        print(amt)
-        peter.amount += Decimal(amt)
-        print(amt)
-        print(peter.amount)
-        peter.timestamp = datetime.datetime.now()
-        print("User updated")
+
+# Charts view for user variables
+@app.route('/currencies/delete/<path:ticker>')
+def deleteentry(ticker):
+    queriedCur = UserCurrency.query.filter_by(ticker='BTC_'+ticker, id=current_user.id).first()
+    if queriedCur is not None:
+        UserCurrency.query.filter_by(ticker='BTC_'+ticker, id=current_user.id).delete()
+        print("Deleted Currency")
     else:
-        me = UserCurrency(amount=float(amt),id=current_user.id, ticker=currency.ticker,last=currency.last, bid=currency.bid, ask=currency.last,timestamp=datetime.datetime.now())
-        print(me)
-        db.session.add(me)
-        print("Usered added")
+        print("Could not delete")  
 
-
-    db.session.commit()
-    return redirect(url_for('index'))
-
+    db.session.commit() 
+    return redirect(url_for('currencies'))
 # Charts view for user variables
 @app.route("/charts")
 def chart():
