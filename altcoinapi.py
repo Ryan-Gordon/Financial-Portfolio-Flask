@@ -104,6 +104,10 @@ security = Security(app, user_datastore)
 # Create a user to test with
 @app.before_first_request
 def create_user():
+    # Possible implementation 
+    # Query db for users by email 
+    # if dummy user does not exist, create him and attempt to fill the database
+    # if not perhaps check the db and if no currencies are there fill that up too.
     if db is None:
         db.create_all()
         user_datastore.create_user(email='ryan@gordon.com', password='password', confirmed_at=datetime.datetime.now())
@@ -111,19 +115,11 @@ def create_user():
         # Pull JSON market data from Bittrex
         b = requests.get('https://bittrex.com/api/v1.1/public/getmarketsummaries')
         #Print value to user and assign to variable
-        print(r)
         data = r.json()
         #Print value to user and assign to variable
-        print(b)
         bittrex = b.json()
 
         for key in data.keys():
-            #Test statements - to be removed !!!!!!!
-            print(key)
-            print(data[key]['last'])
-            print(float(data[key]['lowestAsk']))
-            print(Decimal(data[key]['lowestAsk']))
-            print(type(data[key]['lowestAsk']))
             u = Currency(ticker=key, last=data[key]['last'], ask=data[key]['lowestAsk'], bid=data[key]['highestBid'], timestamp=datetime.datetime.now())
             db.session.add(u)
 
@@ -181,7 +177,6 @@ def contact():
 #Removed Get method, GET method is consider less safe than POST
 @app.route('/addNewCurrency', methods=['POST'])
 def addNewCurrency():
-    
     amount = request.form['Amount'] #Amount taken from posted form
     ticker = request.form['Ticker'].upper() #Ticker taken from posted form
     currency = Currency.query.filter_by(ticker='BTC_'+ticker).first() #query the db for currency
@@ -195,20 +190,11 @@ def addNewCurrency():
             queriedCur.timestamp=datetime.datetime.now()
             queriedCur.priceInBTC = (float(currency.last)*float(queriedCur.amount))
             queriedCur.priceInUSD = (queriedCur.priceInBTC * float(usd2btc.last))
-            print(usd2fiat['rates']['EUR'])
-            print(str(queriedCur.priceInUSD))
-            print(queriedCur.priceInUSD /usd2fiat['rates']['EUR'])
-            print(queriedCur.priceInUSD *usd2fiat['rates']['EUR'])
             queriedCur.priceInEUR = queriedCur.priceInUSD * usd2fiat['rates']['EUR']
             queriedCur.priceInCHY = queriedCur.priceInUSD * usd2fiat['rates']['CNY']
             print("Currency amount updated in DB")
         else:  
             me = UserCurrency(amount=float(amount), id=current_user.id, ticker=currency.ticker, last=currency.last, bid=currency.bid, ask=currency.last, timestamp=datetime.datetime.now(), priceInBTC=(float(currency.last)*float(amount)), priceInUSD=(float(usd2btc.last)*(float(currency.last)*float(amount))), priceInEUR=( (float(usd2btc.last)*(float(currency.last)*float(amount)) *float(usd2fiat['rates']['EUR'])) ), priceInCHY=( (float(usd2btc.last)*(float(currency.last)*float(amount)) *float(usd2fiat['rates']['CNY'])) ))
-            print(me)
-            print(usd2fiat['rates']['EUR'])
-            print((float(usd2btc.last) *float(amount))/float(usd2fiat['rates']['EUR']))
-            print(float(usd2btc.last)*(float(currency.last)*float(amount)))
-            print(   (float(usd2btc.last)*(float(currency.last)*float(amount)) *float(usd2fiat['rates']['EUR']))     )
 
             db.session.add(me)
             print("Currency added to DB")
@@ -228,7 +214,7 @@ def deleteentry(ticker):
         UserCurrency.query.filter_by(ticker='BTC_'+ticker, id=current_user.id).delete()
         print("Deleted Currency")
     else:
-        print("Could not delete. Redirecting")  
+        print("Could not delete. Redirecting")
 
     db.session.commit()
     return redirect(url_for('currencies'))
@@ -244,9 +230,6 @@ def chart():
 
     Currencies = UserCurrency.query.filter_by(id=current_user.id).all()
     for row in Currencies:
-        print("Hello")
-        print(row.ticker)
-        print(str(row.last))
         labels.append(row.ticker)
         valuesAmount.append(row.amount)
         valuesInEur.append(row.priceInEUR)
@@ -254,7 +237,7 @@ def chart():
         valuesInUSD.append(row.priceInUSD)
         valuesInCNY.append(row.priceInCHY)
 
-    colors = [ "#F7464A", "#46BFBD", "#FDB45C", "#FEDCBA", "#ABCDEF", "#DDDDDD", "#ABCABC"]
+    colors = ["#F7464A", "#46BFBD", "#FDB45C", "#FEDCBA", "#ABCDEF", "#DDDDDD", "#ABCABC"]
     return render_template('charts.html', set=list(zip(valuesAmount, valuesInEur, valuesInUSD, valuesInCNY, labels, colors)))
 
 ### This starts the API section
@@ -269,26 +252,13 @@ def BTC_SDC():
     # Pull JSON market data from Bittrex
     b = requests.get('https://bittrex.com/api/v1.1/public/getmarketsummaries')
     
-    #Print value to user and assign to variable
-    print(r)
     data = r.json()
     #Print value to user and assign to variable
-    print(b)
     bittrex = b.json()
-    print(bittrex)
-    for key in data.keys():
-        print(key)
-    
-    print(data['BTC_SDC']['highestBid'])
-
-    #Prints the bittrex api data for coin 134 aka sdc
-    print(bittrex['result'][134])
-    
     
     # In this section highBid and lowAsk are unicode
-    poloHighBid  =  data['BTC_SDC']['highestBid']
+    poloHighBid = data['BTC_SDC']['highestBid']
     poloLowAsk = data['BTC_SDC']['lowestAsk']
-    
     # In order to sum the values and not all the values for the list we need to convert the vars to floats
     # Float allows us to add the decimal numbers together with precision
     poloLast = float(data['BTC_SDC']['last'])
@@ -315,20 +285,10 @@ def BTC_ETH():
     b = requests.get('https://bittrex.com/api/v1.1/public/getmarketsummaries')
     
     #Print value to user and assign to variable
-    print(r)
     data = r.json()
     #Print value to user and assign to variable
-    print(b)
+    
     bittrex = b.json()
-    print(bittrex)
-    for key in data.keys():
-        print(key)
-    
-    print(data['BTC_ETH']['highestBid'])
-
-    #Prints the bittrex api data for coin 61 aka ETH
-    print(bittrex['result'][61])
-    
     
     # In this section highBid and lowAsk are unicode
     poloHighBid  =  data['BTC_ETH']['highestBid']
@@ -362,20 +322,11 @@ def BTC_XMR():
     b = requests.get('https://bittrex.com/api/v1.1/public/getmarketsummaries')
     
     #Print value to user and assign to variable
-    print(r)
+    
     data = r.json()
     #Print value to user and assign to variable
-    print(b)
+    
     bittrex = b.json()
-    print(bittrex)
-    for key in data.keys():
-        print(key)
-    
-    print(data['BTC_XMR']['highestBid'])
-
-    #Prints the bittrex api data for coin 193 aka XMR
-    print(bittrex['result'][193])
-    
     
     # In this section highBid and lowAsk are unicode
     poloHighBid  =  data['BTC_XMR']['highestBid']

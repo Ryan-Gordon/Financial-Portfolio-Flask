@@ -1,6 +1,6 @@
 .panel-table .panel-body {
-        padding: 0;
-    }
+    padding: 0;
+}
     
 .panel-table .panel-body .table-bordered {
 border-style: none;
@@ -96,5 +96,4 @@ Label the data
 */
 #no-more-tables td:before {
     content: attr(data-title);
-}
 }
