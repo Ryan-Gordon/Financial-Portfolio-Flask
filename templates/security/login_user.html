@@ -1,4 +1,4 @@
-{% from "security/_macros.html" import render_field_with_errors, render_field %} {% include "security/_messages.html" %} {% block head %}
+{% from "security/_macros.html" import render_field_with_errors, render_field %} {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/landing-page.css') }}">
 
 <link href="static/css/bootstrap/bootstrap.min.css" rel="stylesheet">
@@ -69,8 +69,6 @@
 
 </div>
 
-{% include "security/_menu.html" %}
-
 <!-- 
     THis is the default Login provided with flask security
     <h1>Login</h1>
@@ -81,5 +79,8 @@
   {{ render_field_with_errors(login_user_form.remember) }}
   {{ render_field(login_user_form.next) }}
   {{ render_field(login_user_form.submit) }}
+
+
+{% include "security/_menu.html" %}
 </form>
 -->

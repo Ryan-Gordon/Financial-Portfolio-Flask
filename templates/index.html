@@ -9,14 +9,14 @@
     <meta name="description" content="A webapp for tracking of assets and investments">
     <meta name="author" content="Ryan Gordon">
 
-    <title>{% block title %}{% endblock %} Altcoin Portfolio</title>
+    <title>{% block title %}{% endblock %} | Financial Portfolio</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="static/css/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
     <!-- Custom CSS -->
     <link href="static/css/simple-sidebar.css" rel="stylesheet">
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -36,10 +36,9 @@
     <!-- Bootstrap Core JavaScript -->
     <script src="static/js/bootstrap.min.js"></script>
     <div id="wrapper">
-
-
         <!-- Sidebar -->
         <div id="sidebar-wrapper">
+            <!-- Sidebar menu items -->
             <ul class="sidebar-nav">
                 <li class="sidebar-brand">
                     <a href="#">
@@ -53,7 +52,7 @@
                     <a href="/currencies"><i class="fa fa-money"></i>   Currencies</a>
                 </li>
                 <li>
-                    <a href="#"><i class="fa fa-line-chart" aria-hidden="true"></i>  Stocks</a>
+                    <a href="#"><i class="fa fa-line-chart" aria-hidden="true"></i>  Stocks (Coming soon)</a>
                 </li>
                 <li>
                     <a href="/charts"><i class="fa fa-bar-chart" aria-hidden="true"></i>  Charts</a>
@@ -66,6 +65,7 @@
                 </li>
 
             </ul>
+            <!-- footer for sidemenu -->
             <footer class="footer">
                 <div class="footer-container">
                     <p class="text-muted">Made with &#9829;.</p>
@@ -79,15 +79,12 @@
         <nav class="navbar navbar-full">
             <!-- style=" background-color: #58b3f3; -->
             <div class="container-fluid">
-                <!-- Brand and toggle get grouped for better mobile display -->
+                <!-- Menu toggle used to hide and show sidemenu -->
                 <div class="navbar-header">
-
-
                     <a class="navbar-brand" href="#menu-toggle" id="menu-toggle">
                         <span class="glyphicon glyphicon-menu-hamburger"></span> Menu
                     </a>
                 </div>
-
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse nav-text" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
@@ -115,35 +112,20 @@
         <div id="page-content-wrapper">
             <div class="container-fluid">
 
-
+                <!-- block content will contain the HTML from any pages that inherit this page -->
                 {% block content %}{% endblock %}
-                <!--
-                <div class="row">
-                    <div class="col-lg-12">
-                        <h1>Simple Sidebar</h1>
-                        <p>Lorem ipsum dolor sit amet, erat omnes vivendo vix at. Bla Bla Bla placeholder text</p>
-                        <p>Make sure to keep all page content within the <code>#page-content-wrapper</code>.</p>
-                        <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>
-                    </div>
-                </div>
-                -->
             </div>
         </div>
         <!--page-content-wrapper -->
 
     </div>
     <!--wrapper -->
-
-
-
     <!-- Menu Toggle Script -->
     <script>
         $("#menu-toggle").click(function(e) {
             e.preventDefault();
             $("#wrapper").toggleClass("toggled");
         });
-
-
         var cur = document.getElementById("demo");
     </script>
 

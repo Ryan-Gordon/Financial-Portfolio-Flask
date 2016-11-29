@@ -1,110 +1,8 @@
 {% extends "index.html" %} {% block title %}Currencies{% endblock %} {% block head %} {{ super() }}
-<style type="text/css">
-    .panel-table .panel-body {
-        padding: 0;
-    }
-    
-    .panel-table .panel-body .table-bordered {
-        border-style: none;
-        margin: 0;
-    }
-    
-    .panel-table .panel-body .table-bordered>thead>tr>th:first-of-type {
-        text-align: center;
-        width: 100px;
-    }
-    
-    .panel-table .panel-body .table-bordered>thead>tr>th:last-of-type,
-    .panel-table .panel-body .table-bordered>tbody>tr>td:last-of-type {
-        border-right: 0px;
-    }
-    
-    .panel-table .panel-body .table-bordered>thead>tr>th:first-of-type,
-    .panel-table .panel-body .table-bordered>tbody>tr>td:first-of-type {
-        border-left: 0px;
-    }
-    
-    .panel-table .panel-body .table-bordered>tbody>tr:first-of-type>td {
-        border-bottom: 0px;
-    }
-    
-    .panel-table .panel-body .table-bordered>thead>tr:first-of-type>th {
-        border-top: 0px;
-    }
-    
-    .panel-table .panel-footer .pagination {
-        margin: 0;
-    }
-    /*
-used to vertically center elements, may need modification if you're not using default sizes.
-*/
-    
-    .panel-table .panel-footer .col {
-        line-height: 34px;
-        height: 34px;
-    }
-    
-    .panel-table .panel-heading .col h3 {
-        line-height: 30px;
-        height: 30px;
-    }
-    
-    .panel-table .panel-body .table-bordered>tbody>tr>td {
-        line-height: 34px;
-    }
-    
-    @media only screen and (max-width: 800px) {
-        /* Force table to not be like tables anymore */
-        #no-more-tables table,
-        #no-more-tables thead,
-        #no-more-tables tbody,
-        #no-more-tables th,
-        #no-more-tables td,
-        #no-more-tables tr {
-            display: block;
-        }
-        /* Hide table headers (but not display: none;, for accessibility) */
-        #no-more-tables thead tr {
-            position: absolute;
-            top: -9999px;
-            left: -9999px;
-        }
-        #no-more-tables tr {
-            border: 1px solid #ccc;
-        }
-        #no-more-tables td {
-            /* Behave  like a "row" */
-            border: none;
-            border-bottom: 1px solid #eee;
-            position: relative;
-            padding-left: 50%;
-            white-space: normal;
-            text-align: left;
-        }
-        #no-more-tables td:before {
-            /* Now like a table header */
-            position: absolute;
-            /* Top/left values mimic padding */
-            top: 6px;
-            left: 6px;
-            width: 45%;
-            padding-right: 10px;
-            white-space: nowrap;
-            text-align: left;
-            font-weight: bold;
-        }
-        /*
-	Label the data
-	*/
-        #no-more-tables td:before {
-            content: attr(data-title);
-        }
-    }
-</style>
-{% endblock %} {% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='investment-tables.css') }}">
+{% endblock %}
+{% block content %}
 <div class="col-md-10 col-md-offset-1">
-
-
     <div class="panel panel-default panel-table">
         <div class="panel-heading">
             <div class="row">
@@ -115,11 +13,11 @@ used to vertically center elements, may need modification if you're not using de
                     <button type="button" class="btn btn-sm btn-primary btn-create" data-toggle="modal" data-target="#myModal">Create New</button>
                 </div>
             </div>
-        </div>
+        </div><!-- end panel heading -->
+
         <div class="panel-body">
             <div id="no-more-tables">
                 <table class="col-md-12 table-bordered table-striped table-condensed cf">
-
                     {% if Currencies|length
                     < 1 %} <thead>
 
@@ -138,6 +36,7 @@ used to vertically center elements, may need modification if you're not using de
                         <th class="numeric">Total in USD</th>
                     </tr>
                 </thead>
+                
                 <tbody>
                     {% for thing in Currencies %}
                     <tr>
@@ -159,7 +58,7 @@ used to vertically center elements, may need modification if you're not using de
                 {% endif %}
                 </table>
             </div>
-        </div>
+        </div> <!-- end panel body -->
         <div class="panel-footer">
             <div class="row">
                 <div class="col col-xs-4">Page 1 of 5
@@ -233,6 +132,9 @@ used to vertically center elements, may need modification if you're not using de
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
+    </div>
+</div><!-- end modal -->
+
 
 
         {% endblock %}
