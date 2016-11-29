@@ -21,7 +21,7 @@
                     <li style="padding-left: 0.75em;">
                         <button type="button" class="btn btn-info navbar-btn" style="width: 10em">
                               <a href="/"><b> Back To Home </b></a>
-                            </button>
+                        </button>
                     </li>
                 </ul>
             </div>
@@ -41,6 +41,7 @@
         </div>
     </div>
     <!-- End login header -->
+
     <!-- Well for sign in form-->
     <div class="container">
         <div class="row">
@@ -48,7 +49,11 @@
                 <div class="well">
                     <!-- Form -->
                     <form action="{{ url_for_security('login') }}" method="POST" name="login_user_form">
-                        {{ login_user_form.hidden_tag() }} {{ render_field_with_errors(login_user_form.email) }} {{ render_field_with_errors(login_user_form.password) }} {{ render_field_with_errors(login_user_form.remember) }} {{ render_field(login_user_form.next) }}
+                        {{ login_user_form.hidden_tag() }} 
+                        {{ render_field_with_errors(login_user_form.email) }} 
+                        {{ render_field_with_errors(login_user_form.password) }} 
+                        {{ render_field_with_errors(login_user_form.remember) }} 
+                        {{ render_field(login_user_form.next) }}
 
                         <!-- If SECURITY_RECOVERABLE is 'True' in script -->
                         {% if security.recoverable %}
@@ -60,14 +65,11 @@
                             <button type="submit" class="btn btn-block btn-success" href="{{ url_for_security('login') }}">Log Me In &#128077;</button>
                         </div>
                     </form>
-                    </form>
                 </div>
             </div>
         </div>
     </div>
 </body>
-
-</div>
 
 <!-- 
     THis is the default Login provided with flask security

@@ -28,6 +28,8 @@ app.config['SECRET_KEY'] = 'super-secret'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data/database.db'
 app.config['SECURITY_REGISTERABLE'] = True # This enables the register option for flask_security
 app.config['SECURITY_RECOVERABLE'] = True # This enables the forgot password option for flask_security
+app.config['SECURITY_POST_LOGIN_VIEW'] = 'dashboard'
+app.config['SECURITY_POST_REGISTER_VIEW'] = 'dashboard'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 db = SQLAlchemy(app) # Create database connection object with SQLAlchemy
@@ -44,7 +46,6 @@ users_currencies = db.Table('users_currencies',
         db.Column('last', db.Float()),
         db.Column('bid', db.Float()),
         db.Column('ask', db.Float())
-        
         )
 # This class is used to model the table which will hold Users
 # Contains a backreference to the Role class for User/Admin role possiblities

@@ -7,7 +7,7 @@
         <div class="panel-heading">
             <div class="row">
                 <div class="col col-xs-6">
-                    <h3 class="panel-title">Currencies</h3>
+                    <h3 class="panel-title">Stocks</h3>
                 </div>
                 <div class="col col-xs-6 text-right">
                     <button type="button" class="btn btn-sm btn-primary btn-create" data-toggle="modal" data-target="#myModal">Create New</button>
@@ -18,10 +18,11 @@
         <div class="panel-body">
             <div id="no-more-tables">
                 <table class="col-md-12 table-bordered table-striped table-condensed cf">
-                    {% if Currencies|length < 1 %} <thead>
+                    {% if Stocks|length < 1 %} 
+                    <thead>
 
-                        <th>Looks like you dont have anything here! Click the button to add a new asset! &#9757;</th>
-                        </thead>
+                        <th>Looks like you dont have anything here! Click the button to start tracking stocks! &#9757;</th>
+                    </thead>
                 </table>
                 {% else %}
                 <thead class="cf">
@@ -37,7 +38,7 @@
                 </thead>
 
                 <tbody>
-                    {% for thing in Currencies %}
+                    {% for thing in Stocks %}
                     <tr>
 
                         <td align="center">
@@ -60,21 +61,7 @@
         </div> <!-- end panel body -->
         <div class="panel-footer">
             <div class="row">
-                <div class="col col-xs-4">Page 1 of 5
-                </div>
-                <div class="col col-xs-8">
-                    <ul class="pagination hidden-xs pull-right">
-                        <li><a href="#">1</a></li>
-                        <li><a href="#">2</a></li>
-                        <li><a href="#">3</a></li>
-                        <li><a href="#">4</a></li>
-                        <li><a href="#">5</a></li>
-                    </ul>
-                    <ul class="pagination visible-xs pull-right">
-                        <li><a href="#">«</a></li>
-                        <li><a href="#">»</a></li>
-                    </ul>
-                </div>
+                
             </div>
         </div>
     </div>
