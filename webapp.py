@@ -237,6 +237,7 @@ def chart():
         valuesInUSD.append(row.priceInUSD)
         valuesInCNY.append(row.priceInCHY)
 
+    print(len(valuesAmount))
     colors = ["#F7464A", "#46BFBD", "#FDB45C", "#FEDCBA", "#ABCDEF", "#DDDDDD", "#ABCABC"]
     return render_template('charts.html', set=list(zip(valuesAmount, valuesInEur, valuesInUSD, valuesInCNY, labels, colors)))
 
