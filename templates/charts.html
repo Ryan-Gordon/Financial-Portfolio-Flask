@@ -41,10 +41,10 @@
       <div class="row">
         <div class="col-md-5">
             <div class="panel panel-default">
-                <div class="panel-heading">Value in GBP</div> <!-- /panel-heading-->
+                <div class="panel-heading">Value in Chinese Yaun</div> <!-- /panel-heading-->
 
     <div class="panel-body">
-        <canvas id="chartGBP" width="300" height="300" class='img-responsive'>
+        <canvas id="chartCNY" width="300" height="300" class='img-responsive'>
               Sorry, your browser doesn't support the &lt;canvas&gt; element.
             </canvas>
         
@@ -86,7 +86,7 @@ function makePieChart(){
 
     
     var pieData = [
-            {% for amount, euros, dollars, label, colors in set %}
+            {% for amount, euros, dollars, yaun, label, colors in set %}
                 {
                     value: {{amount}},  //value comes from jinja
                     label: "{{label}}", //label used for 
@@ -97,7 +97,7 @@ function makePieChart(){
  
          ];
     var pieData2 = [
-            {% for amount, euros, dollars, label,colors in set %}
+            {% for amount, euros, dollars, yaun, label,colors in set %}
                 {
                     value: {{euros}},
                     label: "{{label}}",
@@ -109,9 +109,20 @@ function makePieChart(){
          ];
         
     var pieDataUSD = [
-            {% for amount, euros, dollars, label,colors in set %}
+            {% for amount, euros, dollars, yaun, label,colors in set %}
                 {
                     value: {{dollars}},
+                    label: "{{label}}",
+                    color : "{{colors}}"
+                },
+                {% endfor %}
+ 
+ 
+         ];
+    var pieDataCNY = [
+            {% for amount, euros, dollars, yaun,  label,colors in set %}
+                {
+                    value: {{yaun}},
                     label: "{{label}}",
                     color : "{{colors}}"
                 },
@@ -164,10 +175,10 @@ function makePieChart(){
 
 //To DO:
 //set up pie chart for third chart containing GBP data
-/*
-var piechartGBP= new Chart(document.getElementById("chartGBP").getContext("2d")).Pie(pieData3,optionsPie);
-       document.getElementById("legendDiv3").innerHTML = piechartGBP.generateLegend();
-       */
+
+var piechartCNY= new Chart(document.getElementById("chartCNY").getContext("2d")).Pie(pieDataCNY,optionsPie);
+       document.getElementById("legendDiv3").innerHTML = piechartCNY.generateLegend();
+       
 //set up pie chart for fourth chart containing USD data
 var piechartUSD= new Chart(document.getElementById("chartUSD").getContext("2d")).Pie(pieDataUSD);
        document.getElementById("legendDiv4").innerHTML = piechartUSD.generateLegend();

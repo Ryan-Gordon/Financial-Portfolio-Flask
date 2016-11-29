@@ -199,7 +199,7 @@ def addNewCurrency():
             print(queriedCur.priceInUSD /usd2fiat['rates']['EUR'])
             print(queriedCur.priceInUSD *usd2fiat['rates']['EUR'])
             queriedCur.priceInEUR = queriedCur.priceInUSD * usd2fiat['rates']['EUR']
-            queriedCur.prineInCHY = queriedCur.priceInUSD * usd2fiat['rates']['CNY']
+            queriedCur.priceInCHY = queriedCur.priceInUSD * usd2fiat['rates']['CNY']
             print("Currency amount updated in DB")
         else:  
             me = UserCurrency(amount=float(amount), id=current_user.id, ticker=currency.ticker, last=currency.last, bid=currency.bid, ask=currency.last, timestamp=datetime.datetime.now(), priceInBTC=(float(currency.last)*float(amount)), priceInUSD=(float(usd2btc.last)*(float(currency.last)*float(amount))), priceInEUR=( (float(usd2btc.last)*(float(currency.last)*float(amount)) *float(usd2fiat['rates']['EUR'])) ), priceInCHY=( (float(usd2btc.last)*(float(currency.last)*float(amount)) *float(usd2fiat['rates']['CNY'])) ))
@@ -227,9 +227,9 @@ def deleteentry(ticker):
         UserCurrency.query.filter_by(ticker='BTC_'+ticker, id=current_user.id).delete()
         print("Deleted Currency")
     else:
-        print("Could not delete")  
+        print("Could not delete. Redirecting")  
 
-    db.session.commit() 
+    db.session.commit()
     return redirect(url_for('currencies'))
 # Charts view for user variables
 @app.route("/charts")
@@ -239,6 +239,7 @@ def chart():
     valuesInEur = []
     # valuesInGBP = []
     valuesInUSD = []
+    valuesInCNY = []
 
     Currencies = UserCurrency.query.filter_by(id=current_user.id).all()
     for row in Currencies:
@@ -250,9 +251,10 @@ def chart():
         valuesInEur.append(row.priceInEUR)
         # valuesInGBP.append(row.priceInGBP)
         valuesInUSD.append(row.priceInUSD)
+        valuesInCNY.append(row.priceInCHY)
 
     colors = [ "#F7464A", "#46BFBD", "#FDB45C", "#FEDCBA", "#ABCDEF", "#DDDDDD", "#ABCABC"]
-    return render_template('charts.html', set=list(zip(valuesAmount, valuesInEur, valuesInUSD, labels, colors)))
+    return render_template('charts.html', set=list(zip(valuesAmount, valuesInEur, valuesInUSD, valuesInCNY, labels, colors)))
 
 ### This starts the API section
 ### inseert some api doc here
