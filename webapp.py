@@ -82,6 +82,7 @@ class Currency(db.Model, UserMixin):
     bid = db.Column(db.String(255))
     timestamp = db.Column(db.DateTime())
 
+
 # This class is used to model the table which will hold each users currency
 # Contains id as a foreign key from User
 
@@ -104,6 +105,36 @@ class UserCurrency(db.Model, UserMixin):
     index = index_property('id', 'index')
 
 
+class Stock(db.Model, UserMixin):
+    __tablename__ = "Stocks"
+    id = db.Column(db.Integer, primary_key=True)
+    ticker = db.Column(db.String(255), unique=True)
+    last = db.Column(db.String(255))
+    market = db.Column(db.String(255))
+    timestamp = db.Column(db.DateTime())
+
+
+# This class is used to model the table which will hold each users currency
+# Contains id as a foreign key from User
+
+
+class UserStocks(db.Model, UserMixin):
+    __tablename__ = "users_stocks"
+    trans_id = db.Column(db.Integer, primary_key=True, index=True)
+    id = db.Column(db.Integer)
+
+    amount = db.Column(db.Numeric())
+    ticker = db.Column(db.String(255))
+    priceInBTC = db.Column(db.Numeric())
+    priceInUSD = db.Column(db.Numeric())
+    priceInEUR = db.Column(db.Numeric())
+    priceInCHY = db.Column(db.Numeric())
+    last = db.Column(db.String(255))
+    ask = db.Column(db.String(255))
+    bid = db.Column(db.String(255))
+    timestamp = db.Column(db.DateTime())
+    index = index_property('id', 'index')
+
 # Setup user_datastore and sqlalchemy for flask_security to use
 user_datastore = SQLAlchemyUserDatastore(db, User, Currency)
 security = Security(app, user_datastore)
@@ -116,8 +147,9 @@ def create_user():
     # Query db for users by email
     # if dummy user does not exist, create him and attempt to fill the database
     # if not perhaps check the db and if no currencies are there fill that up too.
-    query = User.query.all()
-    if query is None:
+   
+    if db is None:
+        print("No Users found, creating test user")
         db.create_all()
         user_datastore.create_user(email='ryan@gordon.com', password='password', confirmed_at=datetime.datetime.now())
         r = requests.get('https://poloniex.com/public?command=returnTicker')
@@ -176,8 +208,28 @@ def stocks():
     # http://finance.google.com/finance/info?client=ig&q=NASDAQ%3AAAPL,GOOG,MSFT,AMZN,TWTR
     # Use this to access the stock prices or perhaps use a better one if one exists
     # this should ebe the same crack as it was with the Poloniex and Bittrex API
-    request = requests.get('http://finance.google.com/finance/info?client=ig&q=NASDAQ%3AAAPL,GOOG,MSFT,AMZN,TWTR')
-    stockData = request.json()
+    if Stock.query.first() is None:
+        print("No stock data found in DB")
+        request = requests.get('http://finance.google.com/finance/info?client=ig&q=NASDAQ%3AAAPL,GOOG,MSFT,AMZN,TWTR')
+        request.encoding = 'utf-8'  # We need to change encoding as this API uses ISO
+        print(request.encoding)
+        o = request.text[4:]  # The response object contains some characters at start that we cant parse. Trim these off
+        print("Request after char slice"+o)
+
+        result = json.loads(o)  # After we trim the characters, turn back into JSON
+        print(result)  # Show json result
+        for i in result:
+            print(i)
+            print(i['t']) # Print the ticker
+            u = Stock(ticker=i['t'], last=i['l'], market=i['e'], timestamp=datetime.datetime.now())
+            db.session.add(u)
+
+        db.session.commit()
+    else:
+        print("Found stock data in DB")
+        # do something
+    # query db for stocks
+    # pass into html using render_template
     return render_template("stocks.html")
 # This route is the main starter view of the app and contains info from the other sections
 
