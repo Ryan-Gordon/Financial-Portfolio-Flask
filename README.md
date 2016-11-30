@@ -1,37 +1,61 @@
-# Coin-Counter-API
-A python api for crypto currencies which aggregates pricing data from different markets and displays the average for the given coin. This is the api whose code is open source. Plan to integrate this into a mobile app also.
+# Financial Portfolio Flask
+A Flask Python webapp which utilises a Bootstrap front-end.
+Allows for the tracking and visualisation of Cryptocurrency or Stock investments.    
+Presently the webapp supports 3 physical currencies out of box (EUR, USD, CNY) however the API used to gather currency pricing data has support for up to 11 more which can be configured.
+There is also a charting view available for your currencies which utilises Chart.js
 
-Using Flask, a number of cryptomarkets are pulled using the requests module. Each market select has provided a public API for us to use which does not need a API key or secret.
-
-The pricing data for a number of currencies is pulled down, aggregated and then inserted in a data model. 
-A webapp is provided with this api for the tracking of assets.
-
-To access the api:
-API routes are available for a number of currencies to get there you will need to navagate to /api/currencyName. e.g 
-`/api/sdc`  
-To access the web app:  
+The UI of the app is mobile friendly and the tables change to vertical for smaller screens less than 768px  
 Please see [user guide](#User-Guide)
-
-### Roadmap
-+ <del> Flask server access from other device - Run on 0.0.0.0 and access the IP of the PC serving it</del>  
-+ <del>Login/Signup functionality </del>  
-+ <del> Landing page describing webapp</del>  
-+ <del>Dashboard page for initial view </del>  
-+ <del>About & Contact Page  </del>  
-+ <del>Adding a currency to a user </del>
-+ Styling login and signup forms
-+ Perhaps some stock asset tracking if time perhaps  
-+ Dashboard page   
-+ Charting for assets  
-+ Host api on a hosting provider
+#### Features
++ Majority of programming language done in Python
++ Responsive Design
++ Mobile Friendly - Tested on iPad Mini, Samsung J3
++ Abstracted models - can add other assets 
++ Currently supports over 100 Cryptocurrencies.
++ Configurable support for all stocks on Google Finace API (5+ Out of box)
 
 #### User Guide
+###### Installation:
+The easiest way to install the webapp is to clone the repo in its entirety and either install requirements.txt, use the venv provided with extensions installed, if you have used python you more than likely have most extensions installed.
+To run the webapp, nagate to the directory and enter:
+
+> $ python webapp.py 
+ 
+or
+
+> $ flask webapp.py  
+
 Upon loading the website you will be required to either sign in to the default profile or to register your own account which will require an email and password.
 Once registered the dashboard appears. On the sidemenu are a number of quick link to different sections of the app aswell as buttons on the dashboard.  
-To add a Currency:  
+###### To add a Currency:  
 Navagate to the currency page. Initially there will be none there however clicking 'New' in the top right corner of the table will present a modal for adding a currency.
 Select your amount, relevant ticker and submit. The currencies price will be queried from the database and the asset added to your account. Adding more of the same currency will affect the previous entry and not create a new one.
 Entering a negative value will devalue your asset possibly into negative values. This is left in for margin trading capability.
+Once added, you will see the amount held and values in BTC, EUR, USD and CNY
+###### To add a Stock:  
+Navagate to the stock page. Initially there will be none there however clicking 'New' in the top right corner of the table will present a modal for adding a stock.
+Select your amount, relevant ticker and submit. The stocks value will be queried from the database and the asset added to your account. Adding more of the same stock will affect the previous entry and not create a new one.
+Entering a negative value will devalue your asset possibly into negative values. This is left in for margin trading capability.
+Once added, you will see the amount held, values in EUR, USD and the market of the stock (NYSE, NASDAQ)
+###### Charts:
+Once currencies are added to your account you can utilises charts of your investments for a visual representation. Charts availble for amount of each held and the value of your assets in EUR, USD and CNY
+
+###### API:
+To access the api:
+API routes are available for a number of currencies to get there you will need to navagate to /api/currencyName. e.g 
+`/api/sdc`  
+ 
+
+### Roadmap
++ <del>Login/Signup functionality </del>  
++ <del> Landing page describing webapp</del>  
++ <del>Dashboard page for initial view </del>  
++ <del> EXTRA: Stock trading </del> 
++ <del>Dashboard page </del > 
++ <del>Charting for assets  </del>
++ Host webapp on a hosting provider after grading.
+
+
 
 
 #### Data Representation and Querying Project 2016
@@ -53,7 +77,7 @@ The application is written using the Flask library in Python 3. Both must be ins
 
 Once these prerequisites are installed, the application can be run locally:
 
-> $ python altcoinapi.py
+> $ python webapp.py
 
 Once the application is running, it can be accessed by pointing your browser at http://127.0.0.1:5000/ .
 
