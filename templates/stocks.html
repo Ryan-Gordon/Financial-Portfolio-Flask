@@ -7,7 +7,7 @@
         <div class="panel-heading">
             <div class="row">
                 <div class="col col-xs-6">
-                    <h3 class="panel-title">Stocks</h3>
+                    <h3 class="panel-title">Stocks  (Beta)</h3>
                 </div>
                 <div class="col col-xs-6 text-right">
                     <button type="button" class="btn btn-sm btn-primary btn-create" data-toggle="modal" data-target="#myModal">Create New</button>
@@ -42,8 +42,7 @@
                     <tr>
 
                         <td align="center">
-                            <a class="btn btn-default" ><span class="glyphicon glyphicon-pencil"> </span></a>
-                            <a class="btn btn-danger" href=="{{url_for('deleteentry', ticker=thing.ticker)}}"><span class="glyphicon glyphicon-trash"></span></a>
+                             <a class="btn btn-danger" href="{{url_for('deletestock', ticker=thing.ticker)}}"><span class="glyphicon glyphicon-trash"></span></a>
                         </td>
                         <td data-title="Ticker">{{ thing.ticker }}</td>
                         <td data-title="Amount" class="numeric">{{'%0.5f'% thing.amount |float}}</td>

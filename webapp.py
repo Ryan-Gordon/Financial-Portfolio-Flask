@@ -146,7 +146,7 @@ def create_user():
     # Query db for users by email
     # if dummy user does not exist, create him and attempt to fill the database
     # if not perhaps check the db and if no currencies are there fill that up too.
-    if db is None:
+    if db is None or User.query.first() is None:
         print("No Users found, creating test user")
         db.create_all()
         user_datastore.create_user(email='ryan@gordon.com', password='password', confirmed_at=datetime.datetime.now())
@@ -179,7 +179,7 @@ def landing_page():
 @login_required
 def index():
     return render_template("index.html")
-# Dummy function used to test log outs. Needs to be implemented into a button or something
+# All this does is log out the user if any and 
 
 
 @app.route('/logout')
@@ -209,16 +209,10 @@ def stocks():
     if Stock.query.first() is None:
         print("No stock data found in DB")
         request = requests.get('http://finance.google.com/finance/info?client=ig&q=NASDAQ%3AAAPL,GOOG,MSFT,AMZN,TWTR')
-        request.encoding = 'utf-8'  # We need to change encoding as this API uses ISO
-        print(request.encoding)
+        request.encoding = 'utf-8'  # We need to change encoding as this API uses ISO and i use utf-8 everywhere else
         o = request.text[4:]  # The response object contains some characters at start that we cant parse. Trim these off
-        print("Request after char slice"+o)
-
         result = json.loads(o)  # After we trim the characters, turn back into JSON
-        print(result)  # Show json result
         for i in result:
-            print(i)
-            print(i['t'])  # Print the ticker
             u = Stock(ticker=i['t'], last=i['l'], market=i['e'], timestamp=datetime.datetime.now())
             db.session.add(u)
 
@@ -241,11 +235,6 @@ def addNewStock():
     fiat = requests.get('http://api.fixer.io/latest?base=USD')  # Fiat is a term for financials i.e Euro, Dollar
     usd2fiat = fiat.json()
     queriedCur = UserStocks.query.filter_by(ticker=ticker, id=current_user.id).first()
-
-    print(queriedStock)
-    print(queriedCur)
-    print(ticker)
-    print(amount)
 
     if queriedStock is not None:
         if queriedCur is not None:
@@ -270,14 +259,14 @@ def addNewStock():
 @login_required
 def dash():
     return render_template("dashboard.html")
-# This route provides an about me page for me the creator. Needs work
+# This route provides an about me page for me the creator.
 
 
 @app.route('/about')
 @login_required
 def about():
     return render_template("about.html")
-# This route provides contact links. May need work
+# This route provides contact links. Not much going on here.
 
 
 @app.route('/contact')
@@ -286,7 +275,7 @@ def contact():
     return render_template("contact.html")
 
 # This route is used when a user adds a new currency. Info is submitted to server via POST.
-# Removed Get method, GET method is consider less safe than POST
+# Removed Get method. Design Principle from John Healy. Use only what you need.
 
 
 @app.route('/addNewCurrency', methods=['POST'])
@@ -318,7 +307,11 @@ def addNewCurrency():
     return redirect(url_for('currencies'))
 
 
-# Charts view for user variables
+# This route is triggered via the currency route
+# Db is queried for provided currency and if user has stock it removes from db and commits change
+# If nothing there it prints this to console and redirects
+
+
 @app.route('/currencies/delete/<ticker>')
 def deleteentry(ticker):
     queriedCur = UserCurrency.query.filter_by(ticker=ticker, id=current_user.id).first()
@@ -330,7 +323,27 @@ def deleteentry(ticker):
 
     db.session.commit()
     return redirect(url_for('currencies'))
-# Charts view for user variables
+
+# This route is triggered via the stocks route
+# Db is queried for provided stock and if user has stock it removes from db and commits change
+# If nothing there it prints this to console and redirects
+
+
+@app.route('/stocks/delete/<ticker>')
+def deletestock(ticker):
+    queriedCur = UserStocks.query.filter_by(ticker=ticker, id=current_user.id).first()
+    if queriedCur is not None:
+        UserStocks.query.filter_by(ticker=ticker, id=current_user.id).delete()
+        print("Deleted Currency")
+    else:
+        print("Could not delete. Redirecting")
+
+    db.session.commit()
+    return redirect(url_for('stocks'))
+
+# Charts view allows for visual represententation of the users assets 
+# I leveraged the skills I learned in my Graphics Programming module 
+# and utilised chart js. This is the only part of my project that uses JS apart from the menu toggle
 
 
 @app.route("/charts")
@@ -355,7 +368,9 @@ def chart():
     colors = ["#F7464A", "#46BFBD", "#FDB45C", "#FEDCBA", "#ABCDEF", "#DDDDDD", "#ABCABC"]
     return render_template('charts.html', set=list(zip(valuesAmount, valuesInEur, valuesInUSD, valuesInCNY, labels, colors)))
 
-# This starts the API section
+# This starts the API section. I initially set out on this project as I noticed there was no API
+# for averaged data for crypto currencies. In my api I have set up averaged prices for a number of top
+# cryptocurrencies. It is my hope after this project it may be improved by the open source community.
 
 
 @app.route('/api/sdc')
@@ -444,7 +459,6 @@ def BTC_XMR():
     # Fill JSON with lowAsk highBid price avgBid
     providedJson = {"Market Name": marketName, "poloLast": poloLast, "bittrexLast": bittrexLast, "priceObject": pricesList, "poloLow": poloLowAsk, "poloHighBid": poloHighBid}
 
-    # data['BTC_SDC']
     return json.dumps(providedJson)
     # end function
 
