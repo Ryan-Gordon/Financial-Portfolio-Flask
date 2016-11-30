@@ -227,10 +227,44 @@ def stocks():
         db.session.commit()
     else:
         print("Found stock data in DB")
+        
         # do something
     # query db for stocks
+    Stocks = UserStocks.query.filter_by(id=current_user.id).all()
+
     # pass into html using render_template
-    return render_template("stocks.html")
+    return render_template("stocks.html", Stocks=Stocks)
+
+@app.route('/addNewStock', methods=['POST'])
+def addNewStock():
+    amount = request.form['Amount']  # Amount taken from posted form
+    ticker = request.form['Ticker'].upper()  # Ticker taken from posted form
+    queriedStock = Stock.query.filter_by(ticker=ticker).first()  # query the db for currency
+    fiat = requests.get('http://api.fixer.io/latest?base=USD')
+    usd2fiat = fiat.json()
+    queriedCur = UserStocks.query.filter_by(ticker=ticker, id=current_user.id).first()
+
+    print(queriedStock)
+    print(queriedCur)
+    print(ticker)
+    print(amount)
+
+    if queriedStock is not None:
+        if queriedCur is not None:
+            queriedCur.amount += Decimal(amount)
+            queriedCur.timestamp = datetime.datetime.now()
+            #queriedCur.priceInEUR = queriedCur.priceInUSD * usd2fiat['rates']['EUR']
+            # queriedCur.priceInCHY = queriedCur.priceInUSD * usd2fiat['rates']['CNY']
+            print("Currency amount updated in DB")
+        else:
+            me = UserStocks(amount=float(amount), id=current_user.id, ticker=queriedStock.ticker, last=queriedStock.last, timestamp=datetime.datetime.now(), priceInUSD=((float(queriedStock.last)*float(amount))), priceInEUR=(((float(queriedStock.last)*float(amount))*float(usd2fiat['rates']['EUR']))), priceInCHY=(((float(queriedStock.last)*float(amount)) * float(usd2fiat['rates']['CNY']))))
+
+            db.session.add(me)
+            print("Currency added to DB")
+        db.session.commit()
+    else:
+        flash('Unrecognised Ticker. Please select one of the supported tickers')
+    return redirect(url_for('stocks'))
 # This route is the main starter view of the app and contains info from the other sections
 
 

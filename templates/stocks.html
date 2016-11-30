@@ -47,7 +47,6 @@
                         </td>
                         <td data-title="Ticker">{{ thing.ticker }}</td>
                         <td data-title="Amount" class="numeric">{{'%0.5f'% thing.amount |float}}</td>
-                        <td data-title="Total in BTC" class="numeric">&#8383; {{'%0.8f'% thing.priceInBTC }}</td>
                         <td data-title="Total in EUR" class="numeric">&#128; {{'%0.2f'% thing.priceInEUR| float }}</td>
                         <td data-title="Total in USD" class="numeric">&#36; {{'%0.2f'%thing.priceInUSD|float }}</td>
 
@@ -79,11 +78,11 @@
                 <h4 class="modal-title">Modal Header</h4>
             </div>
             <div class="modal-body">
-                <form class="form-horizontal" role="form" action="/addNewCurrency" method="POST">
+                <form class="form-horizontal" role="form" action="/addNewStock" method="POST">
                     <fieldset>
 
                         <!-- Form Name -->
-                        <legend>Address Details</legend>
+                        <legend>Stock Details</legend>
 
                         <!-- Text input-->
                         <div class="form-group">
