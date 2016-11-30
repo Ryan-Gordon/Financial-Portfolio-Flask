@@ -1,4 +1,4 @@
-{% extends "index.html" %} {% block title %}Currencies{% endblock %} {% block head %} {{ super() }}
+{% extends "index.html" %} {% block title %}Stocks{% endblock %} {% block head %} {{ super() }}
 <link rel="stylesheet" href="{{ url_for('static', filename='investment-tables.css') }}">
 {% endblock %}
 {% block content %}
@@ -31,7 +31,7 @@
                         <th>Actions</th>
                         <th>Ticker</th>
                         <th class="numeric">Amount</th>
-                        <th class="numeric">Total in BTC</th>
+                        <th>Market</th>
                         <th class="numeric">Total in EUR</th>
                         <th class="numeric">Total in USD</th>
                     </tr>
@@ -47,6 +47,7 @@
                         </td>
                         <td data-title="Ticker">{{ thing.ticker }}</td>
                         <td data-title="Amount" class="numeric">{{'%0.5f'% thing.amount |float}}</td>
+                        <td data-title="Market">{{thing.market}}</td>
                         <td data-title="Total in EUR" class="numeric">&#128; {{'%0.2f'% thing.priceInEUR| float }}</td>
                         <td data-title="Total in USD" class="numeric">&#36; {{'%0.2f'%thing.priceInUSD|float }}</td>
 
@@ -96,7 +97,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label" for="textinput">Ticker</label>
                             <div class="col-sm-10">
-                                <input type="text" placeholder="XMR" class="form-control" name="Ticker">
+                                <input type="text" placeholder="eg: GOOG" class="form-control" name="Ticker">
                             </div>
                         </div>
 

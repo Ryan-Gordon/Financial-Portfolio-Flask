@@ -125,13 +125,12 @@ class UserStocks(db.Model, UserMixin):
 
     amount = db.Column(db.Numeric())
     ticker = db.Column(db.String(255))
+    market = db.Column(db.String(255))
     priceInBTC = db.Column(db.Numeric())
     priceInUSD = db.Column(db.Numeric())
     priceInEUR = db.Column(db.Numeric())
     priceInCHY = db.Column(db.Numeric())
     last = db.Column(db.String(255))
-    ask = db.Column(db.String(255))
-    bid = db.Column(db.String(255))
     timestamp = db.Column(db.DateTime())
     index = index_property('id', 'index')
 
@@ -240,7 +239,7 @@ def addNewStock():
     amount = request.form['Amount']  # Amount taken from posted form
     ticker = request.form['Ticker'].upper()  # Ticker taken from posted form
     queriedStock = Stock.query.filter_by(ticker=ticker).first()  # query the db for currency
-    fiat = requests.get('http://api.fixer.io/latest?base=USD')
+    fiat = requests.get('http://api.fixer.io/latest?base=USD') # Fiat is a term for financials i.e Euro, Dollar
     usd2fiat = fiat.json()
     queriedCur = UserStocks.query.filter_by(ticker=ticker, id=current_user.id).first()
 
@@ -257,7 +256,7 @@ def addNewStock():
             # queriedCur.priceInCHY = queriedCur.priceInUSD * usd2fiat['rates']['CNY']
             print("Currency amount updated in DB")
         else:
-            me = UserStocks(amount=float(amount), id=current_user.id, ticker=queriedStock.ticker, last=queriedStock.last, timestamp=datetime.datetime.now(), priceInUSD=((float(queriedStock.last)*float(amount))), priceInEUR=(((float(queriedStock.last)*float(amount))*float(usd2fiat['rates']['EUR']))), priceInCHY=(((float(queriedStock.last)*float(amount)) * float(usd2fiat['rates']['CNY']))))
+            me = UserStocks(amount=float(amount), id=current_user.id, ticker=queriedStock.ticker, market=queriedStock.market, last=queriedStock.last, timestamp=datetime.datetime.now(), priceInUSD=((float(queriedStock.last)*float(amount))), priceInEUR=(((float(queriedStock.last)*float(amount))*float(usd2fiat['rates']['EUR']))), priceInCHY=(((float(queriedStock.last)*float(amount)) * float(usd2fiat['rates']['CNY']))))
 
             db.session.add(me)
             print("Currency added to DB")
