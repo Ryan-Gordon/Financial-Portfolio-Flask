@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, session, g
 from flask import render_template, json, redirect, url_for, request, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.indexable import index_property
@@ -114,7 +114,7 @@ class Stock(db.Model, UserMixin):
     timestamp = db.Column(db.DateTime())
 
 
-# This class is used to model the table which will hold each users currency
+# This class is used to model the table which will hold each users stock investments
 # Contains id as a foreign key from User
 
 
@@ -146,7 +146,6 @@ def create_user():
     # Query db for users by email
     # if dummy user does not exist, create him and attempt to fill the database
     # if not perhaps check the db and if no currencies are there fill that up too.
-   
     if db is None:
         print("No Users found, creating test user")
         db.create_all()
@@ -219,14 +218,13 @@ def stocks():
         print(result)  # Show json result
         for i in result:
             print(i)
-            print(i['t']) # Print the ticker
+            print(i['t'])  # Print the ticker
             u = Stock(ticker=i['t'], last=i['l'], market=i['e'], timestamp=datetime.datetime.now())
             db.session.add(u)
 
         db.session.commit()
     else:
         print("Found stock data in DB")
-        
         # do something
     # query db for stocks
     Stocks = UserStocks.query.filter_by(id=current_user.id).all()
@@ -234,12 +232,13 @@ def stocks():
     # pass into html using render_template
     return render_template("stocks.html", Stocks=Stocks)
 
+
 @app.route('/addNewStock', methods=['POST'])
 def addNewStock():
     amount = request.form['Amount']  # Amount taken from posted form
     ticker = request.form['Ticker'].upper()  # Ticker taken from posted form
     queriedStock = Stock.query.filter_by(ticker=ticker).first()  # query the db for currency
-    fiat = requests.get('http://api.fixer.io/latest?base=USD') # Fiat is a term for financials i.e Euro, Dollar
+    fiat = requests.get('http://api.fixer.io/latest?base=USD')  # Fiat is a term for financials i.e Euro, Dollar
     usd2fiat = fiat.json()
     queriedCur = UserStocks.query.filter_by(ticker=ticker, id=current_user.id).first()
 
@@ -252,7 +251,7 @@ def addNewStock():
         if queriedCur is not None:
             queriedCur.amount += Decimal(amount)
             queriedCur.timestamp = datetime.datetime.now()
-            #queriedCur.priceInEUR = queriedCur.priceInUSD * usd2fiat['rates']['EUR']
+            # queriedCur.priceInEUR = queriedCur.priceInUSD * usd2fiat['rates']['EUR']
             # queriedCur.priceInCHY = queriedCur.priceInUSD * usd2fiat['rates']['CNY']
             print("Currency amount updated in DB")
         else:
@@ -320,11 +319,11 @@ def addNewCurrency():
 
 
 # Charts view for user variables
-@app.route('/currencies/delete/<path:ticker>')
+@app.route('/currencies/delete/<ticker>')
 def deleteentry(ticker):
-    queriedCur = UserCurrency.query.filter_by(ticker='BTC_'+ticker, id=current_user.id).first()
+    queriedCur = UserCurrency.query.filter_by(ticker=ticker, id=current_user.id).first()
     if queriedCur is not None:
-        UserCurrency.query.filter_by(ticker='BTC_'+ticker, id=current_user.id).delete()
+        UserCurrency.query.filter_by(ticker=ticker, id=current_user.id).delete()
         print("Deleted Currency")
     else:
         print("Could not delete. Redirecting")
