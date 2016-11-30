@@ -1,4 +1,4 @@
-import os
+
 from flask import Flask, session, g
 from flask import render_template, json, redirect, url_for, request, flash
 from flask_sqlalchemy import SQLAlchemy
@@ -6,12 +6,15 @@ from sqlalchemy.ext.indexable import index_property
 from flask_mail import Mail
 from flask_security import Security, SQLAlchemyUserDatastore
 from flask_security import UserMixin, RoleMixin, login_required, current_user
-import requests
-import datetime
 from decimal import *
 from flask import session, g
+import os
+import requests
+import datetime
+"""
 # Setup flask_mail. This is used to email users
 # Can send a welcome email on registration or forgotten password link
+"""
 mail = Mail()
 MAIL_SERVER = 'smtp.gmail.com'
 MAIL_PORT = 465
@@ -22,7 +25,10 @@ MAIL_PASSWORD = '99Google99'
 app = Flask(__name__)  # Setup flask app
 app.config.from_object(__name__)  # Setup app config
 mail.init_app(app)  # Initialise flask_mail with this app
-# @Config settings
+"""
+# My Config settings for flask security and sqlachemy. 
+# Debug is left set to false. Set to true for live reload and debugging
+"""
 app.config['DEBUG'] = True  # Disable this when ready for production
 app.config['SECRET_KEY'] = 'super-secret'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data/database.db'
@@ -34,7 +40,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 db = SQLAlchemy(app)  # Create database connection object with SQLAlchemy
 
-# Define models for db
+"""
+# Models for Database.
+"""
 roles_users = db.Table('roles_users',
                        db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
                        db.Column('role_id', db.Integer(), db.ForeignKey('role.id')))
@@ -165,6 +173,13 @@ def create_user():
         db.session.commit()
     else:
         print("Found Users in DB")
+
+"""
+Views/ Routes for the webapp. homepage, login and register have their own pages.  
+All other pages inherit from the index.html page which holds the UI for the webapp (menu and nav)
+This is done using Jinja2 Syntaxing Engine. Designed by the Flask team, pocoo
+
+"""
 # The default route. Provides a landing page with info about the app and options to login/register
 
 
@@ -186,6 +201,28 @@ def index():
 def logout():
     logout_user(self)
 
+# This route is the main starter view of the app and contains info from the other sections
+
+
+@app.route('/dashboard')
+@login_required
+def dash():
+    return render_template("dashboard.html")
+# This route provides an about me page for me the creator.
+
+
+@app.route('/about')
+@login_required
+def about():
+    return render_template("about.html")
+# This route provides contact links. Not much going on here.
+
+
+@app.route('/contact')
+@login_required
+def contact():
+    return render_template("contact.html")
+
 # This route provides shows all the currencies for the user if any.
 
 
@@ -204,8 +241,6 @@ def currencies():
 def stocks():
     # We want the price of 5+ stocks
     # http://finance.google.com/finance/info?client=ig&q=NASDAQ%3AAAPL,GOOG,MSFT,AMZN,TWTR
-    # Use this to access the stock prices or perhaps use a better one if one exists
-    # this should ebe the same crack as it was with the Poloniex and Bittrex API
     if Stock.query.first() is None:
         print("No stock data found in DB")
         request = requests.get('http://finance.google.com/finance/info?client=ig&q=NASDAQ%3AAAPL,GOOG,MSFT,AMZN,TWTR')
@@ -213,6 +248,7 @@ def stocks():
         o = request.text[4:]  # The response object contains some characters at start that we cant parse. Trim these off
         result = json.loads(o)  # After we trim the characters, turn back into JSON
         for i in result:
+            # Now! Thats what I call Pythonic
             u = Stock(ticker=i['t'], last=i['l'], market=i['e'], timestamp=datetime.datetime.now())
             db.session.add(u)
 
@@ -240,8 +276,6 @@ def addNewStock():
         if queriedCur is not None:
             queriedCur.amount += Decimal(amount)
             queriedCur.timestamp = datetime.datetime.now()
-            # queriedCur.priceInEUR = queriedCur.priceInUSD * usd2fiat['rates']['EUR']
-            # queriedCur.priceInCHY = queriedCur.priceInUSD * usd2fiat['rates']['CNY']
             print("Currency amount updated in DB")
         else:
             me = UserStocks(amount=float(amount), id=current_user.id, ticker=queriedStock.ticker, market=queriedStock.market, last=queriedStock.last, timestamp=datetime.datetime.now(), priceInUSD=((float(queriedStock.last)*float(amount))), priceInEUR=(((float(queriedStock.last)*float(amount))*float(usd2fiat['rates']['EUR']))), priceInCHY=(((float(queriedStock.last)*float(amount)) * float(usd2fiat['rates']['CNY']))))
@@ -251,28 +285,9 @@ def addNewStock():
         db.session.commit()
     else:
         flash('Unrecognised Ticker. Please select one of the supported tickers')
+        print('Unrecognised Ticker. Please select one of the supported tickers')
     return redirect(url_for('stocks'))
-# This route is the main starter view of the app and contains info from the other sections
 
-
-@app.route('/dashboard')
-@login_required
-def dash():
-    return render_template("dashboard.html")
-# This route provides an about me page for me the creator.
-
-
-@app.route('/about')
-@login_required
-def about():
-    return render_template("about.html")
-# This route provides contact links. Not much going on here.
-
-
-@app.route('/contact')
-@login_required
-def contact():
-    return render_template("contact.html")
 
 # This route is used when a user adds a new currency. Info is submitted to server via POST.
 # Removed Get method. Design Principle from John Healy. Use only what you need.
@@ -340,11 +355,11 @@ def deletestock(ticker):
 
     db.session.commit()
     return redirect(url_for('stocks'))
-
-# Charts view allows for visual represententation of the users assets 
-# I leveraged the skills I learned in my Graphics Programming module 
+""""
+# Charts view allows for visual represententation of the users assets
+# I leveraged the skills I learned in my Graphics Programming module
 # and utilised chart js. This is the only part of my project that uses JS apart from the menu toggle
-
+"""
 
 @app.route("/charts")
 def chart():
@@ -367,11 +382,11 @@ def chart():
     print(len(valuesAmount))
     colors = ["#F7464A", "#46BFBD", "#FDB45C", "#FEDCBA", "#ABCDEF", "#DDDDDD", "#ABCABC"]
     return render_template('charts.html', set=list(zip(valuesAmount, valuesInEur, valuesInUSD, valuesInCNY, labels, colors)))
-
+""""
 # This starts the API section. I initially set out on this project as I noticed there was no API
 # for averaged data for crypto currencies. In my api I have set up averaged prices for a number of top
 # cryptocurrencies. It is my hope after this project it may be improved by the open source community.
-
+"""
 
 @app.route('/api/sdc')
 @login_required
@@ -461,8 +476,12 @@ def BTC_XMR():
 
     return json.dumps(providedJson)
     # end function
-
+"""
 # Bind to PORT if defined, otherwise default to 5000.
-# I have this here for Heroku as Heroku needs the ability to specify a port
+# I have this here as Heroku or Digital Ocean will needs the ability to specify a port
+# I run the app on 0.0.0.0 so that I can use and consume the app on mobile devices. 
+# When in GMIT if I do this anyone on the eduroam system can access the webapp using <computers ip>:5000
+# Remove this and it will default to localhost. I keep it this way as I designed for mobile users also.
+"""
 port = int(os.environ.get('PORT', 5000))
 app.run(host='0.0.0.0')

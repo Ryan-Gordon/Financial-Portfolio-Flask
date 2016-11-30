@@ -168,7 +168,7 @@ function makePieChart(){
 //To DO:
 //set up pie chart for third chart containing GBP data
 
-var piechartCNY= new Chart(document.getElementById("chartCNY").getContext("2d")).Pie(pieDataCNY,optionsPie);
+var piechartCNY= new Chart(document.getElementById("chartCNY").getContext("2d")).Pie(pieDataCNY);
        document.getElementById("legendDiv3").innerHTML = piechartCNY.generateLegend();
        
 //set up pie chart for fourth chart containing USD data
