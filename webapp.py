@@ -243,7 +243,7 @@ def stocks():
     # http://finance.google.com/finance/info?client=ig&q=NASDAQ%3AAAPL,GOOG,MSFT,AMZN,TWTR
     if Stock.query.first() is None:
         print("No stock data found in DB")
-        request = requests.get('http://finance.google.com/finance/info?client=ig&q=NASDAQ%3AAAPL,GOOG,MSFT,AMZN,TWTR')
+        request = requests.get('http://finance.google.com/finance/info?client=ig&q=NASDAQ%3AAAPL,GOOG,MSFT,AMZN,TWTR,EA,FB,NVDA,CSCO')
         request.encoding = 'utf-8'  # We need to change encoding as this API uses ISO and i use utf-8 everywhere else
         o = request.text[4:]  # The response object contains some characters at start that we cant parse. Trim these off
         result = json.loads(o)  # After we trim the characters, turn back into JSON

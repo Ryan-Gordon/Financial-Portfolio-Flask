@@ -1,7 +1,7 @@
 # Financial Portfolio Flask
 [![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=102)](https://github.com/ellerbrock/open-source-badge/)
 [![GitHub version](https://badge.fury.io/gh/boennemann%2Fbadges.svg)](http://badge.fury.io/gh/boennemann%2Fbadges)
-[![Open Source Love](https://badges.frapsoft.com/os/mit/mit.svg?v=102)](https://github.com/ellerbrock/open-source-badge/)
+[![Open Source Love](https://badges.frapsoft.com/os/mit/mit.svg?v=102)](https://github.com/ellerbrock/open-source-badge/)  
 A Flask Python webapp which utilises a Bootstrap front-end.
 Allows for the tracking and visualisation of Cryptocurrency or Stock investments.    
 Presently the webapp supports 3 physical currencies out of box (EUR, USD, CNY) however the API used to gather currency pricing data has support for up to 11 more which can be configured.
