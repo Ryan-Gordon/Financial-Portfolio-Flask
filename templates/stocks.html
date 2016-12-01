@@ -18,6 +18,7 @@
         <div class="panel-body">
             <div id="no-more-tables">
                 <table class="col-md-12 table-bordered table-striped table-condensed cf">
+                    <!-- Jinja syntax used to give a message if no stocks else show a table of the user stocks -->
                     {% if Stocks|length < 1 %} 
                     <thead>
 
@@ -38,6 +39,7 @@
                 </thead>
 
                 <tbody>
+                    <!--iterate over Stocks object to fill table -->
                     {% for thing in Stocks %}
                     <tr>
 
@@ -93,6 +95,7 @@
                         </div>
 
                         <!-- Text input-->
+                        <!-- Auto complete and autocorrect turned off on this so user can enter exactly which ticker they want -->
                         <div class="form-group">
                             <label class="col-sm-2 control-label" for="textinput">Ticker</label>
                             <div class="col-sm-10">

@@ -10,12 +10,13 @@ There is also a charting view available for your currencies which utilises Chart
 The UI of the app is mobile friendly and the tables change to vertical for smaller screens less than 768px  
 Please see [user guide](#User-Guide)
 #### Features
-+ Majority of programming language done in Python
++ Majority of programming language done in Python. Github says 98% python.
 + Responsive Design
 + Mobile Friendly - Tested on iPad Mini, Samsung J3
 + Abstracted models - can add other assets 
 + Currently supports over 100 Cryptocurrencies.
 + Configurable support for all stocks on Google Finace API (5+ Out of box)
++ Charting views to see your assets with neutral colours
 
 #### User Guide
 ###### Installation:
@@ -69,10 +70,6 @@ The project was guided by the following excerpt from the project instructions:
 
 > You are required to develop a single-page web application(SPA) written in the programming language Python using the Flask framework. You must devise an idea for a web application, write the software, write documentation explaining how the application works, and write a short user guide for it.
 
-This will initially be the API for the project. I may expand it in itself to be a webapp or I may create a webapp using another framework and simply consume the api.
-
-
-
 
 How to run the application
 
@@ -82,11 +79,18 @@ Once these prerequisites are installed, the application can be run locally:
 
 > $ python webapp.py
 
-Once the application is running, it can be accessed by pointing your browser at http://127.0.0.1:5000/ .
+Once the application is running, it can be accessed by pointing your browser at http://127.0.0.1:5000/ or http://0.0.0.0:5000/.
 
 #####Architecture
 
 This web application runs in Python 3 using the Flask web micro-framework and uses Requests to make http requests. Python 3 and Flask were requirements for the project, but Requests was selected for its ease of use, its detailed documentation and it is a recommended extension on flask website.
 
+##### References:
+A number of extensions were used in this app. Please see requirements.txt or the 'About' page in the app for info.
+Front end in Bootstrap
+Backend and logic in python
+Chart.js for charting
+
+Some bootstrap components have been used which have been expanded on and changed to make my own. There are referenced in the source code.
 ##### Extenstions Used:
 See requirements.txt for full list of extenstions

@@ -18,6 +18,7 @@
         <div class="panel-body">
             <div id="no-more-tables">
                 <table class="col-md-12 table-bordered table-striped table-condensed cf">
+                    <!-- Jinja syntax used to give a message if no currencies else show a table of the user currencies -->
                     {% if Currencies|length < 1 %} <thead>
 
                         <th>Looks like you dont have anything here! Click the button to add a new asset! &#9757;</th>
@@ -37,6 +38,7 @@
                 </thead>
 
                 <tbody>
+                    <!--iterate over Stocks object to fill table -->
                     {% for thing in Currencies %}
                     <tr>
 
@@ -92,6 +94,7 @@
                         </div>
 
                         <!-- Text input-->
+                        <!-- Auto complete and autocorrect turned off on this so user can enter exactly which ticker they want -->
                         <div class="form-group">
                             <label class="col-sm-2 control-label" for="textinput">Ticker</label>
                             <div class="col-sm-10">

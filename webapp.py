@@ -1,13 +1,12 @@
 
 from flask import Flask, session, g
 from flask import render_template, json, redirect, url_for, request, flash
+from flask_security import Security, SQLAlchemyUserDatastore
+from flask_security import UserMixin, RoleMixin, login_required, current_user
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.indexable import index_property
 from flask_mail import Mail
-from flask_security import Security, SQLAlchemyUserDatastore
-from flask_security import UserMixin, RoleMixin, login_required, current_user
 from decimal import *
-from flask import session, g
 import os
 import requests
 import datetime

@@ -3,7 +3,7 @@
 <h1>Flask Chart.js</h1>
 <!-- bar chart canvas element -->
 <br>
-<h2>Currency Charts</h2>
+<h2>Your Currency charts</h2>
 
 <div class="container">
       <div class="row">
@@ -122,26 +122,6 @@ function makePieChart(){
  
  
          ];
-/*
-*
-*
-*
-*/
-    var optionsPie = {
-        tooltipEvents: [],
-        showTooltips: false,
-        onAnimationComplete: function() {
-            this.showTooltip(this.segments, true);
-        },
-        tooltipTemplate: "<%= label %> - <%= value %>",
-        
-    }
-
-    /*
-    *For customer legend template
-    * http://stackoverflow.com/questions/20397512/how-can-labels-legends-be-added-for-all-chart-types-in-chart-js-chartjs-org
-    * Not working yet, need to understand better
-    */
  
    // get bar chart canvas
    var mychart = document.getElementById("chartEUR").getContext("2d");

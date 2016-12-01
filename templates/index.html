@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-
+<!-- Have used template for the initial view however massively customised it to the point I can call it my own.
+    contains the side menu with buttons, links and footer with an ajoined menu bar which contains overridden bootstrap css to achieve a flush look -->
 <head>
     {% block head %}
     <meta charset="utf-8">
@@ -95,9 +96,8 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Account <span class="caret"></span></a>
                             <ul class="dropdown-menu navbar-right">
                                 <li><a href="/logout">Log Out</a></li>
-                                <li><a href="/register">Sign up</a></li>
                                 <li role="separator" class="divider"></li>
-                                <li><a href="#">Forgot password?</a></li>
+                                <li><a href="/about">About</a></li>
                             </ul>
                         </li>
                     </ul>

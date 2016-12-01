@@ -1,1 +1,1 @@
-web: python altcoinapi.py
+web: python webapp.py
