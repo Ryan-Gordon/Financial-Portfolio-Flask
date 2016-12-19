@@ -64,6 +64,9 @@ body {
 #wrapper nav a {
     color: #ffffff;
 }
+#wrapper nav a:hover{
+    background-color: #325C74;
+}
 /* By setting the color to white above, nested UL tags get this also
 * I fixed it with this tag which targets the sepcific elements giving issues */
 #wrapper nav ul li ul a {
@@ -96,7 +99,7 @@ body {
 .sidebar-nav li a:hover {
     text-decoration: none;
     color: #fff;
-    background: blue;
+    background: #325C74;
 }
 
 .sidebar-nav li a:active,
@@ -117,6 +120,7 @@ body {
 .sidebar-nav>.sidebar-brand a:hover {
     color: #fff;
     background: none;
+    background-color: #325C74;
 }
 
 .footer {

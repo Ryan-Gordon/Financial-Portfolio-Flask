@@ -9,9 +9,16 @@ There is also a charting view available for your currencies which utilises Chart
 
 The UI of the app is mobile friendly and the tables change to vertical for smaller screens less than 768px  
 Please see [user guide](#User-Guide)
+
+The app is now hosted and working on heroku. To visit the app please head to https://financial-portfolio-flask.herokuapp.com
+From initial testing the pages load blazingly quick, I take some pride in that.
+
 #### Features
++ Now working on heroku
+
 + Majority of programming language done in Python. Github says 98% python.
 + Responsive Design
++ Optimized page load speed
 + Mobile Friendly - Tested on iPad Mini, Samsung J3
 + Abstracted models - can add other assets 
 + Currently supports over 100 Cryptocurrencies.
@@ -57,7 +64,8 @@ API routes are available for a number of currencies to get there you will need t
 + <del> EXTRA: Stock trading </del> 
 + <del>Dashboard page </del > 
 + <del>Charting for assets  </del>
-+ Host webapp on a hosting provider after grading.
++ <del>Host webapp on a hosting provider after grading.</del>
++ Some form of real time price updating via Redis. API calls and results stored in redis for real-time pricing and update SQL db every so often.
 
 
 
