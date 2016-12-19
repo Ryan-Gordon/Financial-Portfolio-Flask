@@ -28,7 +28,7 @@ mail.init_app(app)  # Initialise flask_mail with this app
 # My Config settings for flask security and sqlachemy. 
 # Debug is left set to false. Set to true for live reload and debugging
 """
-app.config['DEBUG'] = True  # Disable this when ready for production
+app.config['DEBUG'] = False  # Disable this when ready for production
 app.config['SECRET_KEY'] = 'super-secret'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data/database.db'
 app.config['SECURITY_REGISTERABLE'] = True  # This enables the register option for flask_security
