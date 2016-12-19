@@ -483,4 +483,4 @@ def BTC_XMR():
 # Remove this and it will default to localhost. I keep it this way as I designed for mobile users also.
 """
 port = int(os.environ.get('PORT', 5000))
-app.run(host='0.0.0.0')
+app.run(host='0.0.0.0', port=port)
